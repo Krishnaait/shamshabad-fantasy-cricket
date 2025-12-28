@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trpc } from "@/lib/trpc";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -18,6 +19,17 @@ export default function Login() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const loginMutation = trpc.auth.login.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setLocation("/dashboard");
+    },
+    onError: (error) => {
+      setError(error.message);
+      toast.error(error.message);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,14 +43,12 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual login API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate login success
-      toast.success("Login successful!");
-      setLocation("/dashboard");
+      await loginMutation.mutateAsync({
+        email: formData.email,
+        password: formData.password,
+      });
     } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      // Error handled by onError callback
     } finally {
       setIsLoading(false);
     }

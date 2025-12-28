@@ -15,6 +15,13 @@
       "when": 1766940538148,
       "tag": "0001_deep_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1766943593163,
+      "tag": "0002_abandoned_falcon",
+      "breakpoints": true
     }
   ]
 }

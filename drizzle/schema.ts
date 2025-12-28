@@ -166,6 +166,17 @@ export const complianceLogs = mysqlTable("compliance_logs", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+// Sessions
+export const sessions = mysqlTable("sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  token: text("token").notNull(),
+  ipAddress: varchar("ipAddress", { length: 50 }),
+  userAgent: text("userAgent"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 // Contact Form Submissions
 export const contactSubmissions = mysqlTable("contact_submissions", {
   id: int("id").autoincrement().primaryKey(),

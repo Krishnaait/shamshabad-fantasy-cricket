@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trpc } from "@/lib/trpc";
 
 export default function ForgotPassword() {
   const [, setLocation] = useLocation();
@@ -22,6 +23,17 @@ export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const forgotPasswordMutation = trpc.auth.forgotPassword.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setLocation("/login");
+    },
+    onError: (error) => {
+      setError(error.message);
+      toast.error(error.message);
+    },
+  });
+
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -31,20 +43,9 @@ export default function ForgotPassword() {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // TODO: Implement actual verification API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate verification success
-      setStep("reset");
-      toast.success("Identity verified! Please set your new password.");
-    } catch (err) {
-      setError("Email and date of birth do not match our records. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    // Move to reset step for user to enter new password
+    setStep("reset");
+    toast.success("Please set your new password.");
   };
 
   const handleReset = async (e: React.FormEvent) => {
@@ -69,14 +70,13 @@ export default function ForgotPassword() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual password reset API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate reset success
-      toast.success("Password reset successful! Please log in with your new password.");
-      setLocation("/login");
+      await forgotPasswordMutation.mutateAsync({
+        email: formData.email,
+        dob: formData.dob,
+        newPassword: formData.newPassword,
+      });
     } catch (err) {
-      setError("Failed to reset password. Please try again.");
+      // Error handled by onError callback
     } finally {
       setIsLoading(false);
     }

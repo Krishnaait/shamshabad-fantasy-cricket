@@ -93,12 +93,14 @@
 - [x] Create /login page with email/password authentication
 - [x] Create /register page with full validation
 - [x] Create /forgot-password page with email + DOB verification
-- [ ] Implement backend auth procedures (register, login, logout, forgot password)
+- [x] Implement backend auth procedures (register, login, logout, forgot password)
 - [x] Add age verification (18+ check) on registration
 - [x] Add geo-restriction validation (block Telangana, AP, Assam, Odisha)
-- [ ] Add compliance logging for registration attempts
+- [x] Add compliance logging for registration attempts
 - [x] Connect Login/Register buttons in Header to actual pages
-- [ ] Test complete authentication flow
+- [x] Connect frontend forms to backend tRPC procedures
+- [x] Write and run authentication tests (8 tests passing)
+- [x] Test complete authentication flow
 
 
 ## GitHub Deployment (User Request)

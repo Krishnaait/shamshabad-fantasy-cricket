@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trpc } from "@/lib/trpc";
 
 const RESTRICTED_STATES = ["Telangana", "Andhra Pradesh", "Assam", "Odisha"];
 
@@ -85,6 +86,17 @@ export default function Register() {
     return true;
   };
 
+  const registerMutation = trpc.auth.register.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setLocation("/login");
+    },
+    onError: (error) => {
+      setError(error.message);
+      toast.error(error.message);
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -96,14 +108,18 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual registration API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate registration success
-      toast.success("Registration successful! Please log in.");
-      setLocation("/login");
+      await registerMutation.mutateAsync({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.name,
+        phone: "", // Add phone field if needed
+        dob: formData.dob,
+        state: formData.state,
+        city: "", // Add city field if needed
+        agreeTerms: formData.agreeTerms,
+      });
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      // Error handled by onError callback
     } finally {
       setIsLoading(false);
     }
