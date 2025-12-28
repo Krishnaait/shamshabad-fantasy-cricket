@@ -166,3 +166,20 @@ These features can be added in future iterations:
 **Project Status**: Production Ready ✅
 **Test Coverage**: 22/22 tests passing
 **Deployment**: Railway (https://shamshabad-fantasy-cricket-production.up.railway.app/)
+
+
+## 🚨 CRITICAL BUG - Login Redirect Issue (Dec 28, 2025)
+- [ ] Test login flow on local development server
+- [ ] Debug why user is not redirected to dashboard after login
+- [ ] Check browser console for JavaScript errors
+- [ ] Check server logs for authentication errors
+- [ ] Fix login redirect logic in Login.tsx
+- [ ] Verify authentication cookie is being set correctly
+- [ ] Test complete login flow end-to-end (login → dashboard)
+
+
+## ✅ Remove Mock Data (Dec 28, 2025) - COMPLETE
+- [x] Remove fake statistics from homepage (10,000+ Active Users, 500+ Matches Covered, 100% Free To Play, 24/7 Support)
+- [x] Replace with real data or remove sections entirely
+- [x] Ensure no fake/mock data anywhere on the website
+- [ ] Deploy updated version to Railway

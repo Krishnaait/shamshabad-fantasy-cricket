@@ -92,12 +92,7 @@ export default function Home() {
     },
   ];
 
-  const stats = [
-    { value: "10,000+", label: "Active Users", icon: Users },
-    { value: "500+", label: "Matches Covered", icon: Trophy },
-    { value: "100%", label: "Free To Play", icon: Star },
-    { value: "24/7", label: "Support Available", icon: Shield },
-  ];
+  // Stats removed - no mock data
 
   const formatMatchDate = (dateTimeGMT: string) => {
     const date = new Date(dateTimeGMT);
@@ -224,21 +219,7 @@ export default function Home() {
               </Button>
             </div>
             
-            {/* Quick Stats */}
-            <div className="flex flex-wrap gap-8 pt-8 border-t border-white/10">
-              {stats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={index} className="text-center">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Icon className="h-5 w-5 text-[oklch(0.65_0.2_45)]" />
-                      <span className="text-3xl font-bold text-white">{stat.value}</span>
-                    </div>
-                    <span className="text-sm text-white/60">{stat.label}</span>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Stats section removed - no mock data */}
           </div>
         </div>
       </section>
