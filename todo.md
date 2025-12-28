@@ -87,3 +87,15 @@
 
 **Status:** In Progress  
 **Last Updated:** 28 December 2025
+
+
+## NEW: Authentication System Implementation (User Reported Issue)
+- [x] Create /login page with email/password authentication
+- [x] Create /register page with full validation
+- [x] Create /forgot-password page with email + DOB verification
+- [ ] Implement backend auth procedures (register, login, logout, forgot password)
+- [x] Add age verification (18+ check) on registration
+- [x] Add geo-restriction validation (block Telangana, AP, Assam, Odisha)
+- [ ] Add compliance logging for registration attempts
+- [x] Connect Login/Register buttons in Header to actual pages
+- [ ] Test complete authentication flow

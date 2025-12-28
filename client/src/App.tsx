@@ -16,6 +16,9 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Disclaimer from "./pages/Disclaimer";
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function Router() {
   return (
@@ -31,6 +34,9 @@ function Router() {
       <Route path={"/terms"} component={Terms} />
       <Route path={"/privacy"} component={Privacy} />
       <Route path={"/disclaimer"} component={Disclaimer} />
+      <Route path={"/login"} component={Login} />
+      <Route path={"/register"} component={Register} />
+      <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
