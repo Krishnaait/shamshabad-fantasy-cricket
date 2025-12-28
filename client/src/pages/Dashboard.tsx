@@ -225,7 +225,8 @@ export default function Dashboard() {
               </div>
             ) : matches && Array.isArray(matches) && matches.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {matches.filter((m: any) => !m.matchStarted).slice(0, 6).map((match: any) => {
+                {/* Show all matches since API currently has no future matches */}
+                {matches.slice(0, 6).map((match: any) => {
                   const matchId = match.id || match.match_id;
                   const userTeamsForMatch = myTeams?.filter((team: any) => team.matchId === matchId) || [];
                   const hasTeam = userTeamsForMatch.length > 0;

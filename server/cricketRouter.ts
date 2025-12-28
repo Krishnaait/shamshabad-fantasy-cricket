@@ -6,7 +6,8 @@ import * as cricketApi from "./cricketApi";
 export const cricketRouter = router({
   getCurrentMatches: publicProcedure.query(async () => {
     try {
-      const matches = await cricketApi.getCurrentMatchesCached();
+      // Use getAllMatches instead of getCurrentMatchesCached to get future matches
+      const matches = await cricketApi.getAllMatches();
       return matches;
     } catch (error) {
       throw new TRPCError({
