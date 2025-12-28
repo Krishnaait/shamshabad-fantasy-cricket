@@ -234,14 +234,16 @@ export interface PlayerInfo {
 
 export interface SeriesInfo {
   id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
+  name?: string;
+  startDate?: string;
+  endDate?: string;
   odi?: number;
   t20?: number;
   test?: number;
   squads?: number;
   matches?: MatchData[];
+  matchList?: MatchData[]; // API returns matchList instead of matches
+  info?: any;
 }
 
 /**
@@ -340,7 +342,20 @@ export async function getPlayerInfo(playerId: string): Promise<PlayerInfo | null
 }
 
 /**
- * 8. Series Info - Information about a specific series
+ * 7. Get All Series - List of all cricket series
+ */
+export async function getAllSeries(): Promise<SeriesInfo[]> {
+  try {
+    const data = await fetchCricketData<SeriesInfo[]>("series");
+    return data;
+  } catch (error) {
+    console.error("[Cricket API] Error fetching series list:", error);
+    return [];
+  }
+}
+
+/**
+ * 8. Series Info - Information about a specific series including matches
  */
 export async function getSeriesInfo(seriesId: string): Promise<SeriesInfo | null> {
   try {
@@ -349,6 +364,60 @@ export async function getSeriesInfo(seriesId: string): Promise<SeriesInfo | null
   } catch (error) {
     console.error(`[Cricket API] Error fetching series info for ${seriesId}:`, error);
     return null;
+  }
+}
+
+/**
+ * 9. Get Upcoming Matches from Future Series
+ * Fetches matches from series that haven't ended yet
+ */
+export async function getUpcomingSeriesMatches(): Promise<CurrentMatch[]> {
+  try {
+    const allSeries = await getAllSeries();
+    const now = new Date();
+    
+    // Filter for series that haven't started or are ongoing (use startDate which has full date)
+    const futureSeries = allSeries.filter(series => {
+      try {
+        if (!series.startDate) return false;
+        const startDate = new Date(series.startDate);
+        // Include series starting within next 12 months
+        const oneYearFromNow = new Date(now);
+        oneYearFromNow.setFullYear(now.getFullYear() + 1);
+        return startDate >= now && startDate <= oneYearFromNow;
+      } catch (e) {
+        return false;
+      }
+    });
+    
+    console.log(`[Cricket API] Found ${futureSeries.length} future series`);
+    
+    // Fetch matches from first 3 future series (to avoid too many API calls)
+    const matchesPromises = futureSeries.slice(0, 3).map(series => getSeriesInfo(series.id));
+    const seriesInfos = await Promise.all(matchesPromises);
+    
+    // Extract matches from series
+    const allMatches: CurrentMatch[] = [];
+    for (const seriesInfo of seriesInfos) {
+      if (seriesInfo) {
+        // API returns matchList, not matches
+        const matchList = seriesInfo.matchList || seriesInfo.matches || [];
+        if (matchList.length > 0) {
+          // Convert MatchData to CurrentMatch format
+          const matches = matchList.map(match => ({
+            ...match,
+            ms: match.matchStarted ? (match.matchEnded ? 'result' : 'live') : 'fixture'
+          } as CurrentMatch));
+          allMatches.push(...matches);
+        }
+      }
+    }
+    
+    console.log(`[Cricket API] Found ${allMatches.length} matches from future series`);
+    return allMatches;
+  } catch (error) {
+    console.error("[Cricket API] Error fetching upcoming series matches:", error);
+    return [];
   }
 }
 

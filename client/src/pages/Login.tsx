@@ -13,6 +13,7 @@ import { trpc } from "@/lib/trpc";
 
 export default function Login() {
   const [, setLocation] = useLocation();
+  const utils = trpc.useUtils();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,8 +22,10 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const loginMutation = trpc.auth.login.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success(data.message);
+      // Invalidate auth cache to refetch user data
+      await utils.auth.me.invalidate();
       setLocation("/dashboard");
     },
     onError: (error) => {

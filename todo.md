@@ -217,3 +217,25 @@ These features can be added in future iterations:
 - [ ] Enhance mobile responsiveness
 - [ ] Add player search/filter functionality
 - [ ] Test all changes and deploy to GitHub/Railway
+
+
+## 🚨 URGENT: Fix "No Upcoming Matches" Issue (Dec 29, 2025)
+- [ ] Investigate Cricket API to find actual upcoming matches
+- [ ] Check different API endpoints (currentMatches, matches, series)
+- [ ] Analyze match data structure to find correct filtering criteria
+- [ ] Update match filtering logic to show matches users can create teams for
+- [ ] Consider using date-based filtering (future matches)
+- [ ] Test with real API data
+- [ ] Deploy fix to Railway
+- [ ] Verify matches display correctly on production
+
+
+## 🔥 CRITICAL FIXES - Dec 29, 2025 (CURRENT)
+- [x] Fix TypeScript errors in cricketApi.ts (series date parsing with null check)
+- [x] Fix matchList handling to use API's matchList field instead of matches
+- [x] Implement getUpcomingSeriesMatches to fetch 2026 series matches
+- [x] Fix dashboard not showing after login (invalidate auth cache)
+- [x] Test upcoming matches display with 2026 series data (6 matches showing)
+- [ ] Push all changes to GitHub
+- [ ] Verify Railway auto-deployment
+- [ ] Test complete user flow on production
