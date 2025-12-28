@@ -63,8 +63,12 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20">
           {/* Logo - Responsive sizing */}
-          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity">
-            <Trophy className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary flex-shrink-0" />
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img 
+              src="/logo.webp" 
+              alt="SHAMSHABAD Fantasy Cricket" 
+              className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 object-contain flex-shrink-0" 
+            />
             <div className="flex flex-col">
               <span className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-tight">
                 SHAMSHABAD
