@@ -99,3 +99,11 @@
 - [ ] Add compliance logging for registration attempts
 - [x] Connect Login/Register buttons in Header to actual pages
 - [ ] Test complete authentication flow
+
+
+## GitHub Deployment (User Request)
+- [ ] Initialize git repository in project
+- [ ] Create GitHub repository
+- [ ] Push all code to GitHub
+- [ ] Verify repository is accessible
+- [ ] Provide repository link to user
