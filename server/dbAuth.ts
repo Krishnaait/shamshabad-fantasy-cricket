@@ -209,3 +209,25 @@ export async function logCompliance(data: {
     details: data.details,
   });
 }
+
+/**
+ * Update user profile information
+ */
+export async function updateUser(
+  userId: number,
+  data: {
+    name?: string;
+    phone?: string;
+    state?: string;
+  }
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const updateData: any = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.phone !== undefined) updateData.phone = data.phone;
+  if (data.state !== undefined) updateData.state = data.state;
+
+  await db.update(users).set(updateData).where(eq(users.id, userId));
+}

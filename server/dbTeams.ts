@@ -90,3 +90,45 @@ export async function updateTeamName(teamId: number, teamName: string) {
 
   await db.update(userTeams).set({ teamName }).where(eq(userTeams.id, teamId));
 }
+
+/**
+ * Update team and player fantasy points
+ */
+export async function updateTeamPoints(
+  teamId: number,
+  totalPoints: number,
+  playerPoints: Record<number, number>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Update team total points
+  await db.update(userTeams).set({ totalPoints }).where(eq(userTeams.id, teamId));
+
+  // Update individual player points
+  for (const [playerIdStr, points] of Object.entries(playerPoints)) {
+    const playerId = parseInt(playerIdStr);
+    await db
+      .update(teamPlayers)
+      .set({ points })
+      .where(eq(teamPlayers.id, playerId));
+  }
+}
+
+/**
+ * Get user team with all players
+ */
+export async function getUserTeamWithPlayers(teamId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const team = await db.select().from(userTeams).where(eq(userTeams.id, teamId)).limit(1);
+  if (team.length === 0) return null;
+
+  const players = await db.select().from(teamPlayers).where(eq(teamPlayers.teamId, teamId));
+
+  return {
+    ...team[0],
+    players,
+  };
+}

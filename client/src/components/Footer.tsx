@@ -31,7 +31,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center gap-2">
-              <Trophy className="h-7 w-7 sm:h-8 sm:w-8 text-primary flex-shrink-0" />
+              <img src="/logo.webp" alt="SHAMSHABAD" className="h-10 w-10 sm:h-12 sm:w-12 object-contain flex-shrink-0" />
               <div className="flex flex-col">
                 <span className="text-base sm:text-lg font-bold text-foreground">SHAMSHABAD</span>
                 <span className="text-[10px] sm:text-xs text-muted-foreground -mt-1">Fantasy Cricket</span>

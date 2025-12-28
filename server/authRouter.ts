@@ -122,4 +122,37 @@ export const authRouter = router({
     if (!userWithProfile) return null;
     return { id: userWithProfile.id, email: userWithProfile.email, name: userWithProfile.profile?.fullName || userWithProfile.name, phone: userWithProfile.phone, state: userWithProfile.state, role: userWithProfile.role };
   }),
+
+  updateProfile: publicProcedure
+    .input(
+      z.object({
+        name: z.string().min(2).optional(),
+        phone: z.string().min(10).optional(),
+        state: z.string().min(2).optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
+      }
+
+      const ipAddress = getClientIP(ctx.req);
+
+      // Update user in database
+      const { updateUser } = await import("./dbAuth");
+      await updateUser(ctx.user.id, {
+        name: input.name,
+        phone: input.phone,
+        state: input.state,
+      });
+
+      await logCompliance({
+        userId: ctx.user.id,
+        action: "profile_update",
+        ipAddress,
+        details: JSON.stringify({ fields: Object.keys(input) }),
+      });
+
+      return { success: true, message: "Profile updated successfully" };
+    }),
 });
