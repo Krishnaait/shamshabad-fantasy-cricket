@@ -139,11 +139,11 @@ export default function Home() {
                 {formatMatchDate(match.dateTimeGMT)}
               </span>
               {match.fantasyEnabled && (
-                <Link href={`/dashboard`}>
-                  <Button size="sm" variant="outline" className="h-7 text-xs">
+                <Button size="sm" variant="outline" className="h-7 text-xs" asChild>
+                  <Link href={`/dashboard`}>
                     {type === "upcoming" ? "Create Team" : "View Details"}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
@@ -177,17 +177,17 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <Link href="/register">
-                <Button size="lg" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto" asChild>
+                <Link href="/register">
                   Get Started Free
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/how-to-play">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" asChild>
+                <Link href="/how-to-play">
                   Learn How To Play
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

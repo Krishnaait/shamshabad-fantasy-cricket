@@ -156,3 +156,10 @@
 - [x] Write and run Cricket API integration tests (8/9 passing)
 - [x] Push all changes to GitHub (via checkpoint)
 - [x] Test complete user flow from homepage to dashboard
+
+
+## Bug Fix: Nested Anchor Tag Error (User Reported - 28 Dec 2025)
+- [x] Identify nested `<a>` tags in Homepage component
+- [x] Fix by removing nested anchor tags or restructuring Link components (used asChild pattern)
+- [x] Test homepage to ensure error is resolved
+- [x] Verify all match cards and CTAs work correctly
