@@ -400,3 +400,45 @@
 - [x] Created multiple CTA sections with background images
 - [x] Made phone and city fields optional in registration
 - [x] Pushed bug fixes to GitHub
+
+
+## 🚨 CRITICAL: Complete Cricket API Review & Fix (29 Dec 2025)
+
+### STEP 1: Review All 18 Cricket APIs
+- [ ] Access Cricket API documentation page (https://api.cricketdata.org)
+- [ ] Login with provided credentials
+- [ ] Document all 18 API endpoints with:
+  - Endpoint URL and method
+  - Required parameters
+  - Response structure
+  - Example responses
+  - Rate limits and caching recommendations
+
+### STEP 2: Recreate cricketApi.ts File
+- [ ] Review current cricketApi.ts implementation
+- [ ] Identify discrepancies with official documentation
+- [ ] Recreate complete API file with correct implementations
+- [ ] Add proper error handling for each endpoint
+- [ ] Add proper TypeScript types for all responses
+- [ ] Implement caching strategy as recommended
+
+### STEP 3: Test & Fix Backend
+- [ ] Test each of 18 API endpoints individually
+- [ ] Verify responses match expected structure
+- [ ] Fix any non-working API calls
+- [ ] Check routers (cricketRouter.ts) for correct endpoint mapping
+- [ ] Verify tRPC procedures are correctly implemented
+- [ ] Run all Cricket API tests and ensure they pass
+
+### STEP 4: Fix Frontend Display Issues
+- [ ] Fix upcoming matches section not showing
+- [ ] Verify Homepage match cards display correctly
+- [ ] Verify Dashboard match cards display correctly
+- [ ] Add proper loading states
+- [ ] Add proper error handling
+- [ ] Test complete user flow with real API data
+
+### Current Issue to Fix First:
+- [ ] Upcoming matches section not showing on homepage/dashboard
+- [ ] Root cause: API call failing or data not being displayed
+- [ ] Solution: Review API implementation and frontend component

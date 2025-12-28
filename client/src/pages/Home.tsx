@@ -11,10 +11,10 @@ export default function Home() {
   // Fetch real-time matches from Cricket API
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
-  // Filter matches by state
-  const liveMatches = currentMatches?.filter(m => m.ms === "live") || [];
-  const upcomingMatches = currentMatches?.filter(m => m.ms === "fixture") || [];
-  const completedMatches = currentMatches?.filter(m => m.ms === "result") || [];
+  // Filter matches by state using matchStarted and matchEnded fields
+  const liveMatches = currentMatches?.filter(m => m.matchStarted && !m.matchEnded) || [];
+  const upcomingMatches = currentMatches?.filter(m => !m.matchStarted) || [];
+  const completedMatches = currentMatches?.filter(m => m.matchEnded) || [];
 
   const features = [
     {

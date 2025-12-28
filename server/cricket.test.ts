@@ -36,11 +36,12 @@ describe("Cricket API Integration", () => {
       expect(match).toHaveProperty("matchType");
       expect(match).toHaveProperty("dateTimeGMT");
       expect(match).toHaveProperty("teams");
-      expect(match).toHaveProperty("ms"); // Match state: fixture, live, result
+      expect(match).toHaveProperty("matchStarted"); // Boolean: match has started
+      expect(match).toHaveProperty("matchEnded"); // Boolean: match has ended
     }
   });
 
-  it("should return matches with valid match states", async () => {
+  it("should return matches with valid match states (matchStarted/matchEnded)", async () => {
     const ctx = createMockContext();
     const caller = appRouter.createCaller(ctx);
 
@@ -48,8 +49,11 @@ describe("Cricket API Integration", () => {
 
     if (matches.length > 0) {
       matches.forEach((match: any) => {
-        if (match.ms) {
-          expect(["fixture", "live", "result"]).toContain(match.ms);
+        expect(typeof match.matchStarted).toBe("boolean");
+        expect(typeof match.matchEnded).toBe("boolean");
+        // A match cannot be ended without being started
+        if (match.matchEnded) {
+          expect(match.matchStarted).toBe(true);
         }
       });
     }
@@ -136,20 +140,23 @@ describe("Cricket API Integration", () => {
 });
 
 describe("Cricket API Helper Functions", () => {
-  it("should filter matches by state", async () => {
+  it("should filter matches by state using matchStarted/matchEnded", async () => {
     const ctx = createMockContext();
     const caller = appRouter.createCaller(ctx);
 
     const matches = await caller.cricket.getCurrentMatches();
 
     if (matches.length > 0) {
-      const liveMatches = matches.filter((m: any) => m.ms === "live");
-      const upcomingMatches = matches.filter((m: any) => m.ms === "fixture");
-      const completedMatches = matches.filter((m: any) => m.ms === "result");
+      const liveMatches = matches.filter((m: any) => m.matchStarted && !m.matchEnded);
+      const upcomingMatches = matches.filter((m: any) => !m.matchStarted);
+      const completedMatches = matches.filter((m: any) => m.matchEnded);
 
       expect(Array.isArray(liveMatches)).toBe(true);
       expect(Array.isArray(upcomingMatches)).toBe(true);
       expect(Array.isArray(completedMatches)).toBe(true);
+      
+      // All matches should be categorized
+      expect(liveMatches.length + upcomingMatches.length + completedMatches.length).toBe(matches.length);
     }
   });
 
