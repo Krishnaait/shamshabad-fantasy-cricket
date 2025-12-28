@@ -143,3 +143,16 @@
 - [x] Implement responsive text sizing and spacing
 - [ ] Test on different screen sizes
 - [x] Ensure navigation works smoothly on all devices
+
+
+## User Reported Issues & New Features (28 Dec 2025)
+- [x] Fix dashboard error after successful login (TypeError: Invalid URL)
+- [x] Add live matches section on homepage (before & after login)
+- [x] Add upcoming matches section on homepage (before & after login)
+- [x] Add completed matches section on homepage (before & after login)
+- [x] Fetch all data from real Cricket API (paid key: 1a822521-d7e0-46ff-98d3-3e51020863f3)
+- [x] NO mock data - only real-time API data
+- [x] Ensure all pages connect and work smoothly
+- [x] Write and run Cricket API integration tests (8/9 passing)
+- [ ] Push all changes to GitHub
+- [x] Test complete user flow from homepage to dashboard

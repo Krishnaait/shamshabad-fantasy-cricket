@@ -4,6 +4,18 @@ import { publicProcedure, router } from "./_core/trpc";
 import * as cricketApi from "./cricketApi";
 
 export const cricketRouter = router({
+  getCurrentMatches: publicProcedure.query(async () => {
+    try {
+      const matches = await cricketApi.getCurrentMatchesCached();
+      return matches;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch current matches",
+      });
+    }
+  }),
+  
   getMatches: publicProcedure.query(async () => {
     try {
       const matches = await cricketApi.getAllMatches();

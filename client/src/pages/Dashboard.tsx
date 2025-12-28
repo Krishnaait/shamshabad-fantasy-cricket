@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";;
 import { Link, useLocation } from "wouter";
 import { Trophy, Calendar, Clock, Users, TrendingUp, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { getLoginUrl } from "@/const";
 export default function Dashboard() {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const [, setLocation] = useLocation();
-  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getMatches.useQuery();
+  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
