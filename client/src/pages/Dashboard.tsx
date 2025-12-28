@@ -17,6 +17,19 @@ export default function Dashboard() {
   
   // Fetch matches
   const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+
+  // Categorize matches by status
+  const liveMatches = matches?.filter((match: any) => 
+    match.matchStarted === true && match.matchEnded === false
+  ) || [];
+  
+  const upcomingMatches = matches?.filter((match: any) => 
+    match.matchStarted === false
+  ) || [];
+  
+  const completedMatches = matches?.filter((match: any) => 
+    match.matchEnded === true
+  ) || [];
   
   // Fetch user's teams
   const { data: myTeams, isLoading: teamsLoading, refetch: refetchTeams } = trpc.team.getMyTeams.useQuery(
@@ -198,6 +211,98 @@ export default function Dashboard() {
           </section>
         )}
 
+        {/* Live Matches */}
+        {liveMatches.length > 0 && (
+          <section className="py-8 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
+            <div className="container">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <h2 className="text-2xl font-bold text-foreground">Live Matches</h2>
+                </div>
+                <Badge variant="destructive">{liveMatches.length} Live</Badge>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {liveMatches.map((match: any) => {
+                  const matchId = match.id || match.match_id;
+                  const userTeamsForMatch = myTeams?.filter((team: any) => team.matchId === matchId) || [];
+                  const hasTeam = userTeamsForMatch.length > 0;
+
+                  return (
+                    <Card key={matchId} className="border-red-500/50 hover:border-red-500 transition-all">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <CardTitle className="text-lg">{match.name || match.title || "Cricket Match"}</CardTitle>
+                          <Badge variant="destructive" className="text-xs animate-pulse">
+                            🔴 LIVE
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="text-center flex-1">
+                            <p className="font-semibold text-foreground">
+                              {match.teamInfo?.[0]?.shortname || match.teama?.short_name || "Team A"}
+                            </p>
+                            {match.score?.[0] && (
+                              <p className="text-sm font-bold text-primary mt-1">
+                                {match.score[0].r}/{match.score[0].w} ({match.score[0].o})
+                              </p>
+                            )}
+                          </div>
+                          <div className="px-4">
+                            <p className="text-sm text-muted-foreground">vs</p>
+                          </div>
+                          <div className="text-center flex-1">
+                            <p className="font-semibold text-foreground">
+                              {match.teamInfo?.[1]?.shortname || match.teamb?.short_name || "Team B"}
+                            </p>
+                            {match.score?.[1] && (
+                              <p className="text-sm font-bold text-primary mt-1">
+                                {match.score[1].r}/{match.score[1].w} ({match.score[1].o})
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="text-sm text-muted-foreground">
+                          <p className="line-clamp-2">{match.status}</p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          {hasTeam ? (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => setLocation(`/team/${userTeamsForMatch[0].id}`)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Team
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              className="w-full"
+                              size="sm"
+                              variant="outline"
+                              disabled
+                            >
+                              Match Started
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Upcoming Matches */}
         <section className="py-8 px-4 pb-16">
           <div className="container">
@@ -223,10 +328,9 @@ export default function Dashboard() {
                   </Card>
                 ))}
               </div>
-            ) : matches && Array.isArray(matches) && matches.length > 0 ? (
+            ) : upcomingMatches.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Show all matches since API currently has no future matches */}
-                {matches.slice(0, 6).map((match: any) => {
+                {upcomingMatches.slice(0, 6).map((match: any) => {
                   const matchId = match.id || match.match_id;
                   const userTeamsForMatch = myTeams?.filter((team: any) => team.matchId === matchId) || [];
                   const hasTeam = userTeamsForMatch.length > 0;

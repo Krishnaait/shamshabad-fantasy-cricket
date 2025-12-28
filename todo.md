@@ -183,3 +183,37 @@ These features can be added in future iterations:
 - [x] Replace with real data or remove sections entirely
 - [x] Ensure no fake/mock data anywhere on the website
 - [ ] Deploy updated version to Railway
+
+
+## 🚀 Railway Deployment Testing & Real-Time Updates (Dec 28, 2025)
+- [ ] Test Railway deployment - verify latest code (5e20054) is deployed
+- [ ] Test complete login flow on Railway (register → login → dashboard → create team)
+- [ ] Fix "No Upcoming Matches" on Railway if still showing
+- [ ] Implement real-time match updates with auto-refresh (30 seconds)
+- [ ] Add ball-by-ball commentary display using match_scorecard API
+- [ ] Implement automatic fantasy points updates during live matches
+- [ ] Test all features on Railway production environment
+
+
+## 🎯 Match Categorization & Team Builder Improvements (Dec 29, 2025)
+
+### Match Categorization - COMPLETED
+- [x] Add Live Matches section to homepage with real-time status detection
+- [x] Fix match filtering logic - properly separate Upcoming, Live, and Completed
+- [x] Detect live matches using matchStarted/matchEnded boolean fields
+- [x] Add animated red pulsing indicator for live matches
+- [x] Add gradient background for live matches section
+- [x] Update Dashboard with same live/upcoming/completed categorization
+- [x] Display limits: Live (all), Upcoming (6), Completed (6)
+- [x] Proper badges for each category
+- [x] Show actual match status from API
+- [x] Empty state handling for each category
+
+### Team Builder UI/UX Improvements - IN PROGRESS
+- [ ] Update Team Builder UI/UX - improve player selection interface
+- [ ] Add better visual feedback for captain/vice-captain selection
+- [ ] Improve player card design with stats and role badges
+- [ ] Add validation messages and loading states
+- [ ] Enhance mobile responsiveness
+- [ ] Add player search/filter functionality
+- [ ] Test all changes and deploy to GitHub/Railway

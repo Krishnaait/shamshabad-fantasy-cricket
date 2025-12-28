@@ -11,14 +11,38 @@ export default function Home() {
   // Fetch real-time matches from Cricket API
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
-  // Filter matches - showing all matches since API has no future matches currently
-  // In production, this would filter by actual match status
+  // Filter matches by actual status from Cricket API
   const allMatches = currentMatches || [];
   
-  // Show most recent matches as "upcoming" for demo purposes
-  const upcomingMatches = allMatches.slice(0, 6); // Show first 6 matches
-  const liveMatches: any[] = []; // No live matches currently
-  const completedMatches = allMatches.slice(6); // Rest are completed
+  // Detect match status based on API response
+  const liveMatches = allMatches.filter((m: any) => {
+    // Match is live if it has started but not ended, or status contains "live" keywords
+    const statusLower = (m.status || '').toLowerCase();
+    return statusLower.includes('live') || 
+           statusLower.includes('inning') || 
+           statusLower.includes('batting') ||
+           statusLower.includes('bowling') ||
+           (m.matchStarted && !m.matchEnded);
+  });
+  
+  const completedMatches = allMatches.filter((m: any) => {
+    const statusLower = (m.status || '').toLowerCase();
+    return statusLower.includes('won') || 
+           statusLower.includes('lost') ||
+           statusLower.includes('tied') ||
+           statusLower.includes('abandoned') ||
+           m.matchEnded;
+  });
+  
+  // Upcoming matches are those not live and not completed
+  const upcomingMatches = allMatches.filter((m: any) => {
+    return !liveMatches.includes(m) && !completedMatches.includes(m);
+  });
+  
+  // Show first 6 of each category
+  const displayUpcoming = upcomingMatches.slice(0, 6);
+  const displayLive = liveMatches.slice(0, 6);
+  const displayCompleted = completedMatches.slice(0, 6);
 
   const features = [
     {
@@ -246,6 +270,34 @@ export default function Home() {
         </section>
       )}
 
+      {/* Live Matches Section */}
+      {displayLive.length > 0 && (
+        <section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <h2 className="text-3xl font-bold">Live Matches</h2>
+                </div>
+              </div>
+              <Button variant="outline" asChild>
+                <Link href="/dashboard">
+                  View All
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayLive.map((match: any) => (
+                <MatchCard key={match.id} match={match} type="live" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Upcoming Matches Section */}
       <section className="py-16 px-4 bg-secondary/30">
         <div className="container">
@@ -271,9 +323,9 @@ export default function Home() {
                 </Card>
               ))}
             </div>
-          ) : upcomingMatches.length > 0 ? (
+          ) : displayUpcoming.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcomingMatches.slice(0, 6).map((match: any) => (
+              {displayUpcoming.map((match: any) => (
                 <MatchCard key={match.id} match={match} type="upcoming" />
               ))}
             </div>
@@ -428,7 +480,7 @@ export default function Home() {
       </section>
 
       {/* Recent Results */}
-      {completedMatches.length > 0 && (
+      {displayCompleted.length > 0 && (
         <section className="py-16 px-4 bg-background">
           <div className="container">
             <div className="flex items-center justify-between mb-8">
@@ -436,7 +488,7 @@ export default function Home() {
               <Badge variant="secondary">{completedMatches.length} Completed</Badge>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {completedMatches.slice(0, 3).map((match: any) => (
+              {displayCompleted.map((match: any) => (
                 <MatchCard key={match.id} match={match} type="completed" />
               ))}
             </div>
