@@ -118,3 +118,16 @@
 - [ ] Run database migrations on Railway
 - [ ] Verify deployment is successful
 - [ ] Test live application URL
+
+
+## Railway Deployment Error Fix (User Reported)
+- [x] Fix Node.js version error in nixpacks.toml
+- [x] Update configuration to use correct Node.js package name
+- [x] Push fix to GitHub
+- [ ] Verify deployment succeeds
+
+
+## Database Migration Automation (User Request)
+- [ ] Update Railway build process to run migrations automatically
+- [ ] Ensure tables are created during deployment
+- [ ] Verify all 11 tables exist in Railway MySQL
