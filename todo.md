@@ -170,3 +170,10 @@
 - [x] Fix all Header nested anchor tags (logo, nav links, dropdown, auth buttons)
 - [x] Search Footer component for nested anchor tags (none found)
 - [x] Test entire website to ensure no more nested anchor errors
+
+
+## GitHub Documentation Update (User Request - 28 Dec 2025)
+- [ ] Create comprehensive GitHub comment with latest updates
+- [ ] Document bug fixes (nested anchor tags)
+- [ ] Document Railway deployment status
+- [ ] Include next steps and roadmap
