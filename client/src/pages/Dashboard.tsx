@@ -1,24 +1,51 @@
-import { useState, useEffect } from "react";;
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Trophy, Calendar, Clock, Users, TrendingUp, ArrowRight } from "lucide-react";
+import { Trophy, Calendar, Clock, Users, TrendingUp, ArrowRight, Eye, Edit, Trash2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { getLoginUrl, isOAuthConfigured } from "@/const";
+import { toast } from "sonner";
 
 export default function Dashboard() {
-  const { user, isAuthenticated, loading, logout } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const [, setLocation] = useLocation();
+  
+  // Fetch matches
   const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  
+  // Fetch user's teams
+  const { data: myTeams, isLoading: teamsLoading, refetch: refetchTeams } = trpc.team.getMyTeams.useQuery(
+    undefined,
+    { enabled: isAuthenticated }
+  );
+
+  // Delete team mutation
+  const deleteTeamMutation = trpc.team.deleteTeam.useMutation({
+    onSuccess: () => {
+      toast.success("Team deleted successfully!");
+      refetchTeams();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete team");
+    },
+  });
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      window.location.href = getLoginUrl();
+      // Use wouter navigation for fallback login page, window.location for OAuth
+      const loginUrl = getLoginUrl();
+      if (loginUrl.startsWith('/')) {
+        setLocation(loginUrl);
+      } else {
+        window.location.href = loginUrl;
+      }
     }
-  }, [loading, isAuthenticated]);
+  }, [loading, isAuthenticated, setLocation]);
 
   if (loading) {
     return (
@@ -35,11 +62,22 @@ export default function Dashboard() {
     return null;
   }
 
+  // Calculate real stats from user's teams
+  const teamsCreated = myTeams?.length || 0;
+  const totalPoints = myTeams?.reduce((sum, team) => sum + (team.totalPoints || 0), 0) || 0;
+  const matchesPlayed = new Set(myTeams?.map(team => team.matchId)).size || 0;
+
   const stats = [
-    { label: "Teams Created", value: "0", icon: Users },
-    { label: "Matches Played", value: "0", icon: Trophy },
-    { label: "Total Points", value: "0", icon: TrendingUp },
+    { label: "Teams Created", value: teamsCreated.toString(), icon: Users },
+    { label: "Matches Played", value: matchesPlayed.toString(), icon: Trophy },
+    { label: "Total Points", value: totalPoints.toString(), icon: TrendingUp },
   ];
+
+  const handleDeleteTeam = (teamId: number) => {
+    if (confirm("Are you sure you want to delete this team?")) {
+      deleteTeamMutation.mutate({ teamId });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -86,6 +124,80 @@ export default function Dashboard() {
           </div>
         </section>
 
+        {/* My Teams Section */}
+        {myTeams && myTeams.length > 0 && (
+          <section className="py-8 px-4">
+            <div className="container">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground">My Teams</h2>
+                <Badge variant="secondary">{myTeams.length} {myTeams.length === 1 ? 'Team' : 'Teams'}</Badge>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myTeams.slice(0, 6).map((team: any) => (
+                  <Card key={team.id} className="border-border hover:border-primary transition-all">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">{team.teamName}</CardTitle>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Match ID: {team.matchId}
+                          </p>
+                        </div>
+                        <Badge 
+                          variant={team.status === 'confirmed' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {team.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Total Points:</span>
+                        <span className="font-bold text-foreground">{team.totalPoints || 0}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Rank:</span>
+                        <span className="font-bold text-foreground">#{team.rank || '-'}</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => setLocation(`/team/${team.id}`)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteTeam(team.id)}
+                          disabled={deleteTeamMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {myTeams.length > 6 && (
+                <div className="mt-6 text-center">
+                  <Button variant="outline">
+                    View All Teams ({myTeams.length})
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* Upcoming Matches */}
         <section className="py-8 px-4 pb-16">
           <div className="container">
@@ -113,42 +225,87 @@ export default function Dashboard() {
               </div>
             ) : matches && Array.isArray(matches) && matches.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {matches.slice(0, 6).map((match: any) => (
-                  <Card key={match.match_id} className="border-border hover:border-primary transition-all">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{match.title || "Cricket Match"}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="text-center flex-1">
-                          <p className="font-semibold text-foreground">{match.teama?.short_name || "Team A"}</p>
-                        </div>
-                        <div className="px-4">
-                          <p className="text-sm text-muted-foreground">vs</p>
-                        </div>
-                        <div className="text-center flex-1">
-                          <p className="font-semibold text-foreground">{match.teamb?.short_name || "Team B"}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>{match.date_start || "TBD"}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
-                          <span>{match.venue || "Venue TBD"}</span>
-                        </div>
-                      </div>
+                {matches.slice(0, 6).map((match: any) => {
+                  const matchId = match.id || match.match_id;
+                  const userTeamsForMatch = myTeams?.filter((team: any) => team.matchId === matchId) || [];
+                  const hasTeam = userTeamsForMatch.length > 0;
 
-                      <Button className="w-full" size="sm">
-                        Create Team
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                  return (
+                    <Card key={matchId} className="border-border hover:border-primary transition-all">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <CardTitle className="text-lg">{match.name || match.title || "Cricket Match"}</CardTitle>
+                          {hasTeam && (
+                            <Badge variant="secondary" className="text-xs">
+                              {userTeamsForMatch.length} {userTeamsForMatch.length === 1 ? 'Team' : 'Teams'}
+                            </Badge>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="text-center flex-1">
+                            <p className="font-semibold text-foreground">
+                              {match.teamInfo?.[0]?.shortname || match.teama?.short_name || "Team A"}
+                            </p>
+                          </div>
+                          <div className="px-4">
+                            <p className="text-sm text-muted-foreground">vs</p>
+                          </div>
+                          <div className="text-center flex-1">
+                            <p className="font-semibold text-foreground">
+                              {match.teamInfo?.[1]?.shortname || match.teamb?.short_name || "Team B"}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>{match.dateTimeGMT || match.date_start || "TBD"}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            <span>{match.venue || "Venue TBD"}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          {hasTeam ? (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => setLocation(`/team/${userTeamsForMatch[0].id}`)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Team
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="flex-1"
+                                onClick={() => setLocation(`/team-builder/${matchId}`)}
+                              >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Team
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              className="w-full"
+                              size="sm"
+                              onClick={() => setLocation(`/team-builder/${matchId}`)}
+                            >
+                              Create Team
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <Card className="border-border">
@@ -174,18 +331,17 @@ export default function Dashboard() {
                   <Trophy className="h-12 w-12 text-primary mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-foreground mb-2">My Teams</h3>
                   <p className="text-sm text-muted-foreground">View and manage your fantasy teams</p>
+                  <p className="text-2xl font-bold text-primary mt-2">{teamsCreated}</p>
                 </CardContent>
               </Card>
               <Link href="/how-to-play">
-                <a>
-                  <Card className="border-border hover:border-primary transition-all cursor-pointer">
-                    <CardContent className="p-6 text-center">
-                      <Users className="h-12 w-12 text-primary mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">How To Play</h3>
-                      <p className="text-sm text-muted-foreground">Learn strategies and tips</p>
-                    </CardContent>
-                  </Card>
-                </a>
+                <Card className="border-border hover:border-primary transition-all cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <Users className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-foreground mb-2">How To Play</h3>
+                    <p className="text-sm text-muted-foreground">Learn strategies and tips</p>
+                  </CardContent>
+                </Card>
               </Link>
               <Card className="border-border hover:border-primary transition-all cursor-pointer">
                 <CardContent className="p-6 text-center">

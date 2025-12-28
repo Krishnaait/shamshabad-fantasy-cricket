@@ -20,6 +20,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import TeamBuilder from "./pages/TeamBuilder";
+import TeamDetails from "./pages/TeamDetails";
 
 function Router() {
   return (
@@ -40,6 +41,7 @@ function Router() {
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/team-builder/:matchId"} component={TeamBuilder} />
+      <Route path={"/team/:teamId"} component={TeamDetails} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

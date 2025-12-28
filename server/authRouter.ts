@@ -30,10 +30,10 @@ export const authRouter = router({
         email: z.string().email(),
         password: z.string().min(8),
         fullName: z.string().min(2),
-        phone: z.string().min(10),
+        phone: z.string().optional().default(""),
         dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
         state: z.string().min(2),
-        city: z.string().min(2),
+        city: z.string().optional().default(""),
         agreeTerms: z.boolean().refine((val) => val === true),
       })
     )
