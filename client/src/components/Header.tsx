@@ -63,33 +63,31 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20">
           {/* Logo - Responsive sizing */}
-          <Link href="/">
-            <a className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity">
-              <Trophy className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary flex-shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-tight">
-                  SHAMSHABAD
-                </span>
-                <span className="text-[10px] sm:text-xs text-muted-foreground -mt-0.5">
-                  Fantasy Cricket
-                </span>
-              </div>
-            </a>
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity">
+            <Trophy className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary flex-shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-base sm:text-lg md:text-xl font-bold text-foreground leading-tight">
+                SHAMSHABAD
+              </span>
+              <span className="text-[10px] sm:text-xs text-muted-foreground -mt-0.5">
+                Fantasy Cricket
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation - Hidden on mobile/tablet */}
           <nav className="hidden xl:flex items-center gap-0.5">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className={`px-2.5 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
-                    isActive(link.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                  }`}
-                >
-                  {link.label}
-                </a>
+              <Link 
+                key={link.href} 
+                href={link.href}
+                className={`px-2.5 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap ${
+                  isActive(link.href)
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                }`}
+              >
+                {link.label}
               </Link>
             ))}
           </nav>
@@ -109,19 +107,15 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard">
-                      <a className="flex items-center w-full cursor-pointer">
-                        <Trophy className="mr-2 h-4 w-4" />
-                        Dashboard
-                      </a>
+                    <Link href="/dashboard" className="flex items-center w-full cursor-pointer">
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/profile">
-                      <a className="flex items-center w-full cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
-                      </a>
+                    <Link href="/profile" className="flex items-center w-full cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -133,18 +127,16 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
               </DropdownMenu>
             ) : (
               <>
-                <Link href="/login">
-                  <a>
-                    <Button variant="outline" size="sm">
-                      Login
-                    </Button>
-                  </a>
-                </Link>
-                <Link href="/register">
-                  <a>
-                    <Button size="sm">Sign Up</Button>
-                  </a>
-                </Link>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/login">
+                    Login
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link href="/register">
+                    Sign Up
+                  </Link>
+                </Button>
               </>
             )}
           </div>
@@ -172,17 +164,17 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
               {/* Mobile Navigation */}
               <nav className="flex flex-col gap-1 mt-6">
                 {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href}>
-                    <a
-                      className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                        isActive(link.href)
-                          ? "text-primary bg-primary/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                      }`}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {link.label}
-                    </a>
+                  <Link 
+                    key={link.href} 
+                    href={link.href}
+                    className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                      isActive(link.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.label}
                   </Link>
                 ))}
               </nav>
@@ -199,22 +191,18 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
                         {user.email}
                       </p>
                     </div>
-                    <Link href="/dashboard">
-                      <a onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full justify-start gap-2">
-                          <Trophy className="h-4 w-4" />
-                          Dashboard
-                        </Button>
-                      </a>
-                    </Link>
-                    <Link href="/profile">
-                      <a onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full justify-start gap-2">
-                          <User className="h-4 w-4" />
-                          Profile
-                        </Button>
-                      </a>
-                    </Link>
+                    <Button variant="outline" className="w-full justify-start gap-2" asChild>
+                      <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                        <Trophy className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start gap-2" asChild>
+                      <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
+                        <User className="h-4 w-4" />
+                        Profile
+                      </Link>
+                    </Button>
                     <Button
                       variant="outline"
                       className="w-full justify-start gap-2 text-destructive hover:text-destructive"
@@ -229,18 +217,16 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
                   </>
                 ) : (
                   <>
-                    <Link href="/login">
-                      <a onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full">
-                          Login
-                        </Button>
-                      </a>
-                    </Link>
-                    <Link href="/register">
-                      <a onClick={() => setIsMenuOpen(false)}>
-                        <Button className="w-full">Sign Up</Button>
-                      </a>
-                    </Link>
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                        Login
+                      </Link>
+                    </Button>
+                    <Button className="w-full" asChild>
+                      <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                        Sign Up
+                      </Link>
+                    </Button>
                   </>
                 )}
               </div>

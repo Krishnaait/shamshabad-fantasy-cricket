@@ -163,3 +163,10 @@
 - [x] Fix by removing nested anchor tags or restructuring Link components (used asChild pattern)
 - [x] Test homepage to ensure error is resolved
 - [x] Verify all match cards and CTAs work correctly
+
+
+## Bug Fix: Additional Nested Anchor Tags (User Reported - 28 Dec 2025)
+- [x] Search Header component for nested anchor tags (found 7 instances)
+- [x] Fix all Header nested anchor tags (logo, nav links, dropdown, auth buttons)
+- [x] Search Footer component for nested anchor tags (none found)
+- [x] Test entire website to ensure no more nested anchor errors
