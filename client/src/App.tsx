@@ -12,13 +12,14 @@ import ResponsibleGaming from "./pages/ResponsibleGaming";
 import FairPlay from "./pages/FairPlay";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
+import TermsConditions from "./pages/Terms";
+import PrivacyPolicy from "./pages/Privacy";
 import Disclaimer from "./pages/Disclaimer";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
+import Dashboard from "./pages/Dashboard";
+import TeamBuilder from "./pages/TeamBuilder";
 
 function Router() {
   return (
@@ -31,15 +32,15 @@ function Router() {
       <Route path={"/fair-play"} component={FairPlay} />
       <Route path={"/faq"} component={FAQ} />
       <Route path={"/contact"} component={Contact} />
-      <Route path={"/terms"} component={Terms} />
-      <Route path={"/privacy"} component={Privacy} />
+      <Route path={"/terms"} component={TermsConditions} />
+      <Route path={"/privacy"} component={PrivacyPolicy} />
       <Route path={"/disclaimer"} component={Disclaimer} />
       <Route path={"/login"} component={Login} />
       <Route path={"/register"} component={Register} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/team-builder/:matchId"} component={TeamBuilder} />
       <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );

@@ -72,7 +72,7 @@ export const matches = mysqlTable("matches", {
 // Contests
 export const contests = mysqlTable("contests", {
   id: int("id").autoincrement().primaryKey(),
-  matchId: int("matchId").notNull(),
+  matchId: varchar("matchId", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   entryFee: int("entryFee").default(0),
@@ -90,8 +90,8 @@ export const contests = mysqlTable("contests", {
 export const userTeams = mysqlTable("user_teams", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  contestId: int("contestId").notNull(),
-  matchId: int("matchId").notNull(),
+  contestId: int("contestId").default(0),
+  matchId: varchar("matchId", { length: 255 }).notNull(),
   teamName: varchar("teamName", { length: 255 }).notNull(),
   captain: varchar("captain", { length: 255 }),
   viceCaptain: varchar("viceCaptain", { length: 255 }),
@@ -132,7 +132,7 @@ export const matchResults = mysqlTable("match_results", {
 // Leaderboards
 export const leaderboards = mysqlTable("leaderboards", {
   id: int("id").autoincrement().primaryKey(),
-  contestId: int("contestId").notNull(),
+  contestId: int("contestId").default(0),
   userId: int("userId").notNull(),
   teamId: int("teamId").notNull(),
   rank: int("rank").notNull(),
@@ -198,3 +198,7 @@ export type Leaderboard = typeof leaderboards.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type ComplianceLog = typeof complianceLogs.$inferSelect;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+
+// Insert types
+export type InsertUserTeam = typeof userTeams.$inferInsert;
+export type InsertTeamPlayer = typeof teamPlayers.$inferInsert;
