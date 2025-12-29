@@ -249,28 +249,6 @@ export default function Home() {
       </section>
 
       {/* Live Matches Section */}
-      {liveMatches.length > 0 && (
-        <section className="py-16 px-4 bg-gradient-to-b from-destructive/5 to-background">
-          <div className="container">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-3 w-3 bg-destructive rounded-full animate-pulse"></div>
-                <h2 className="text-3xl font-bold">Live Matches</h2>
-              </div>
-              <Badge variant="destructive" className="animate-pulse">
-                {liveMatches.length} Live Now
-              </Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {liveMatches.slice(0, 3).map((match: any) => (
-                <MatchCard key={match.id} match={match} type="live" />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Live Matches Section */}
       {displayLive.length > 0 && (
         <section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
           <div className="container">

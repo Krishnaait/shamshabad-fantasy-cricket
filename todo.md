@@ -439,3 +439,12 @@ Users can now:
 - Deploy to GitHub and Railway
 - Check if Contests page exists
 - Improve website CSS/design as requested by user
+
+
+## 🔧 Fix Homepage Match Sections (Dec 29, 2025)
+- [x] Remove duplicate "Live Matches" section from homepage
+- [x] Keep only one "Live Matches" section
+- [x] Add proper "Upcoming Matches" section
+- [x] Refetch upcoming matches from Cricket API
+- [x] Test match categorization (Live vs Upcoming)
+- [ ] Verify Railway production shows correct sections
