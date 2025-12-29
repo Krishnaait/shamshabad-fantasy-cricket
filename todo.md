@@ -449,3 +449,13 @@ Users can now:
 - [ ] Test that all matches display correctly
 - [ ] Add GitHub comment documenting changes
 - [ ] Save final checkpoint
+
+
+## 🐛 Fix Header Dynamic Buttons (Dec 29, 2025)
+- [ ] Update Header.tsx to check auth state
+- [ ] Hide Login/Sign Up buttons when user is logged in
+- [ ] Show Dashboard + Logout buttons when logged in
+- [ ] Test header on all pages (homepage, dashboard, contests)
+- [ ] Verify GitHub connection
+- [ ] Push code to GitHub if connected
+- [ ] Save checkpoint

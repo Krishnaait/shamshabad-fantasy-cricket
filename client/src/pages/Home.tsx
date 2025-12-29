@@ -6,8 +6,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Home() {
+  // Use custom auth hook that checks localStorage immediately
+  const { isAuthenticated, user, handleLogout } = useAuth();
+  
   // Fetch real-time matches from Cricket API
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
@@ -194,7 +198,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header 
+        isAuthenticated={isAuthenticated}
+        user={user}
+        onLogout={handleLogout}
+      />
       
       {/* Hero Section with Stadium Image */}
       <section className="relative pt-20 min-h-[90vh] flex items-center overflow-hidden">

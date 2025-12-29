@@ -10,9 +10,14 @@ import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { MatchCardSkeletonGrid } from "@/components/MatchCardSkeleton";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Contests() {
   const [, setLocation] = useLocation();
+  
+  // Use custom auth hook that checks localStorage immediately
+  const { isAuthenticated, user, handleLogout } = useAuth();
+  
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
   // Filter matches by status
@@ -170,7 +175,11 @@ export default function Contests() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header 
+        isAuthenticated={isAuthenticated}
+        user={user}
+        onLogout={handleLogout}
+      />
 
       {/* Hero Section */}
       <section className="relative py-16 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/10">
