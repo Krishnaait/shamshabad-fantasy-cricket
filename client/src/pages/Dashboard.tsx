@@ -8,7 +8,6 @@ import { trpc } from "@/lib/trpc";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl, isOAuthConfigured } from "@/const";
 import { toast } from "sonner";
 
 export default function Dashboard() {
@@ -50,13 +49,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      // Use wouter navigation for fallback login page, window.location for OAuth
-      const loginUrl = getLoginUrl();
-      if (loginUrl.startsWith('/')) {
-        setLocation(loginUrl);
-      } else {
-        window.location.href = loginUrl;
-      }
+      // Redirect to custom login page
+      setLocation('/login');
     }
   }, [loading, isAuthenticated, setLocation]);
 

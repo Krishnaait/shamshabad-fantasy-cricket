@@ -239,7 +239,39 @@ These features can be added in future iterations:
 - [x] Push all changes to GitHub (commit 3e2ed07)
 - [x] Checkpoint saved (version 3e2ed079)
 
-## 🚀 Railway Deployment - Next Steps
-- [ ] Manually trigger Railway redeploy from dashboard (or wait for auto-deploy)
-- [ ] Verify upcoming matches display on production after deployment
-- [ ] Test complete user flow: register → login → dashboard → create team
+## 🚀 Railway Deployment - Testing Complete
+- [x] Push code to GitHub (commits 132cf09, f9b1257, 3e2ed07)
+- [x] Test registration flow on Railway production (✅ SUCCESS - account created)
+- [x] Test login attempt on Railway production (⚠️ ISSUE: form clears but doesn't redirect)
+- [x] Verify upcoming matches on Railway (⚠️ NOT YET - still showing old code)
+
+### 🔴 ACTION REQUIRED: Manual Railway Redeploy
+Railway hasn't auto-deployed the latest code yet. You must manually trigger redeploy:
+1. Log into https://railway.com/project/8f9c0a5e-1d3b-4941-9e63-a6339d23f92f
+2. Click "shamshabad-fantasy-cricket" service
+3. Click "Deploy" or "Redeploy" button
+4. Wait 2-3 minutes for build to complete
+
+### After Redeploy - Verify:
+- [ ] Upcoming matches section shows 6 matches from 2026 series
+- [ ] Login redirects to dashboard successfully
+- [ ] Complete user flow works: register → login → dashboard → create team
+
+
+## 🚨 Session Cookie Issue - Documented (Dec 29, 2025)
+- [x] Remove Manus OAuth redirect from Dashboard component
+- [x] Update Dashboard to use custom email/password authentication only
+- [x] Remove getLoginUrl() and isOAuthConfigured() calls from Dashboard
+- [x] Test dashboard access - found session cookie not persisting
+- [x] Verify no Manus OAuth redirects occur (SUCCESS)
+- [x] Document session cookie issue with comprehensive analysis
+- [ ] **NEXT**: Fix session cookie not being set/persisted after login
+- [ ] Check cookie-parser middleware registration
+- [ ] Add debug logging to context builder
+- [ ] Create test endpoint for cookie verification
+
+## 🚀 Deployment - In Progress (Dec 29, 2025)
+- [ ] Save checkpoint with all current changes
+- [ ] Push to GitHub (remove Manus OAuth + upcoming matches fixes)
+- [ ] Trigger Railway redeploy
+- [ ] Verify deployment on production
