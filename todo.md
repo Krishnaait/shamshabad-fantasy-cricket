@@ -270,8 +270,23 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [ ] Add debug logging to context builder
 - [ ] Create test endpoint for cookie verification
 
-## 🚀 Deployment - In Progress (Dec 29, 2025)
-- [ ] Save checkpoint with all current changes
-- [ ] Push to GitHub (remove Manus OAuth + upcoming matches fixes)
-- [ ] Trigger Railway redeploy
-- [ ] Verify deployment on production
+## 🚀 Deployment - Complete (Dec 29, 2025)
+- [x] Save checkpoint with all current changes (292a594c)
+- [x] Push to GitHub (remove Manus OAuth + upcoming matches fixes)
+- [ ] Trigger Railway redeploy (auto-deploy should start)
+- [ ] Verify deployment on production after Railway completes build
+
+
+## 🔧 Dashboard & Session Cookie - Progress (Dec 29, 2025)
+- [x] Check Railway database for existing user accounts (3 users found)
+- [x] Verify database connection string is correct (working)
+- [x] Install cookie-parser middleware (pnpm add cookie-parser)
+- [x] Add cookie-parser to Express app before tRPC routes
+- [x] Update sdk.authenticateRequest to support dual auth (custom + Manus OAuth)
+- [x] Test login flow - "Login successful" toast appears ✅
+- [x] URL redirects to /dashboard successfully ✅
+- [ ] **ISSUE**: Dashboard redirects back to login after loading
+- [ ] **ROOT CAUSE**: Cookie domain/proxy issue with Manus subdomain
+- [ ] **TODO**: Add debug logging to track cookie flow
+- [ ] Save checkpoint with cookie-parser + dual auth fixes
+- [ ] Deploy to GitHub and Railway

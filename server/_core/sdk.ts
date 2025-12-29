@@ -257,9 +257,41 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
-    // Regular authentication flow
+    // Parse cookies
     const cookies = this.parseCookies(req.headers.cookie);
     const sessionCookie = cookies.get(COOKIE_NAME);
+    
+    if (!sessionCookie) {
+      throw ForbiddenError("No session cookie found");
+    }
+
+    // Try custom email/password auth first (JWT with userId)
+    try {
+      const secretKey = this.getSessionSecret();
+      const { payload } = await jwtVerify(sessionCookie, secretKey, {
+        algorithms: ["HS256"],
+      });
+      
+      // Check if this is a custom auth token (has userId instead of openId)
+      if (payload.userId && typeof payload.userId === 'number') {
+        const user = await db.getUserById(payload.userId as number);
+        if (user) {
+          // Update last signed in
+          await db.upsertUser({
+            openId: user.openId,
+            email: user.email,
+            password: user.password,
+            lastSignedIn: new Date(),
+          });
+          return user;
+        }
+      }
+    } catch (error) {
+      // Not a custom auth token, try Manus OAuth below
+      console.log("[Auth] Not a custom auth token, trying Manus OAuth");
+    }
+
+    // Fall back to Manus OAuth authentication
     const session = await this.verifySession(sessionCookie);
 
     if (!session) {
