@@ -257,22 +257,26 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
+    console.log('[SDK Auth] 🔍 Starting authentication...');
+    
     // Try to get token from Authorization header first (localStorage auth)
     const authHeader = req.headers.authorization;
     let token: string | undefined;
     
+    console.log('[SDK Auth] Authorization header:', authHeader ? authHeader.substring(0, 50) + '...' : 'NOT FOUND');
+    
     if (authHeader && authHeader.startsWith('Bearer ')) {
       token = authHeader.substring(7); // Remove 'Bearer ' prefix
-      console.log('[SDK] Token from Authorization header');
+      console.log('[SDK Auth] ✅ Token from Authorization header:', token.substring(0, 30) + '...');
     } else {
       // Fallback to cookie-based auth
       const cookies = this.parseCookies(req.headers.cookie);
       token = cookies.get(COOKIE_NAME);
-      console.log('[SDK] Token from cookie');
+      console.log('[SDK Auth] ⚠️ No Authorization header, trying cookie. Found:', token ? token.substring(0, 30) + '...' : 'NONE');
     }
     
     if (!token) {
-      console.log('[SDK] No token found');
+      console.error('[SDK Auth] ❌ No token found in Authorization header or cookie');
       throw ForbiddenError("No session token found");
     }
     
@@ -280,28 +284,34 @@ class SDKServer {
 
     // Try custom email/password auth first (JWT with userId)
     try {
+      console.log('[SDK Auth] 🔑 Attempting to verify as custom auth token...');
       const secretKey = this.getSessionSecret();
       const { payload } = await jwtVerify(sessionCookie, secretKey, {
         algorithms: ["HS256"],
       });
       
+      console.log('[SDK Auth] ✅ Token verified! Payload:', JSON.stringify(payload));
+      
       // Check if this is a custom auth token (has userId instead of openId)
       if (payload.userId && typeof payload.userId === 'number') {
+        console.log('[SDK Auth] ✅ Custom auth token detected, userId:', payload.userId);
         const user = await db.getUserById(payload.userId as number);
         if (user) {
-          // Update last signed in
-          await db.upsertUser({
-            openId: user.openId,
-            email: user.email,
-            password: user.password,
-            lastSignedIn: new Date(),
-          });
+          console.log('[SDK Auth] ✅ User found in database:', user.email);
+          // Update last signed in directly without using upsertUser (which requires openId)
+          // For custom auth users, openId may be null, so we update by userId instead
+          await db.updateUserLastSignIn(user.id);
           return user;
+        } else {
+          console.error('[SDK Auth] ❌ User not found in database for userId:', payload.userId);
         }
+      } else {
+        console.log('[SDK Auth] ⚠️ Token payload does not have userId, trying Manus OAuth');
       }
     } catch (error) {
       // Not a custom auth token, try Manus OAuth below
-      console.log("[Auth] Not a custom auth token, trying Manus OAuth");
+      console.error("[SDK Auth] ❌ Custom auth token verification failed:", error);
+      console.log("[SDK Auth] Trying Manus OAuth authentication...");
     }
 
     // Fall back to Manus OAuth authentication

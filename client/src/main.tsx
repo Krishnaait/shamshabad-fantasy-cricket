@@ -51,7 +51,13 @@ const trpcClient = trpc.createClient({
       headers() {
         // Send token from localStorage in Authorization header
         const token = localStorage.getItem('auth_token');
-        return token ? { Authorization: `Bearer ${token}` } : {};
+        if (token) {
+          console.log('[tRPC Client] ✅ Sending Authorization header with token:', token.substring(0, 30) + '...');
+          return { Authorization: `Bearer ${token}` };
+        } else {
+          console.log('[tRPC Client] ⚠️ No token in localStorage, sending empty headers');
+          return {};
+        }
       },
       fetch(input, init) {
         return globalThis.fetch(input, {

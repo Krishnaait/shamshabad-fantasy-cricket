@@ -26,8 +26,13 @@ export default function Login() {
       toast.success(data.message);
       // Store token in localStorage for persistent auth
       if (data.token) {
+        console.log('[Login] ✅ Received token from server:', data.token.substring(0, 30) + '...');
         localStorage.setItem('auth_token', data.token);
-        console.log('[Login] Token stored in localStorage');
+        const stored = localStorage.getItem('auth_token');
+        console.log('[Login] ✅ Token stored in localStorage, verification:', stored?.substring(0, 30) + '...');
+        console.log('[Login] ✅ Token length:', data.token.length);
+      } else {
+        console.error('[Login] ❌ No token received from server!');
       }
       // Invalidate auth cache to refetch user data
       await utils.auth.me.invalidate();

@@ -38,6 +38,17 @@ async function startServer() {
   
   // CRITICAL: Cookie parser must be registered BEFORE tRPC routes
   app.use(cookieParser());
+  
+  // Debug middleware to log all incoming requests
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/trpc')) {
+      console.log('[Request Debug] Path:', req.path);
+      console.log('[Request Debug] Method:', req.method);
+      console.log('[Request Debug] Authorization header:', req.headers.authorization ? req.headers.authorization.substring(0, 50) + '...' : 'NOT FOUND');
+      console.log('[Request Debug] Cookie header:', req.headers.cookie ? req.headers.cookie.substring(0, 100) + '...' : 'NOT FOUND');
+    }
+    next();
+  });
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // tRPC API
