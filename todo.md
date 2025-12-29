@@ -439,3 +439,13 @@ Users can now:
 - Deploy to GitHub and Railway
 - Check if Contests page exists
 - Improve website CSS/design as requested by user
+
+
+## 🚨 URGENT: Fix Contests Page 404 & Increase Match Count (Dec 29, 2025)
+- [ ] Push latest code to GitHub (includes Contests page)
+- [ ] Increase match fetch limit from 10 series to 20-30 series
+- [ ] Aim for 100+ total matches like reference design
+- [ ] Verify Contests page loads on Railway production
+- [ ] Test that all matches display correctly
+- [ ] Add GitHub comment documenting changes
+- [ ] Save final checkpoint

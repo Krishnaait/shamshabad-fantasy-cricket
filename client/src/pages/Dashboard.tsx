@@ -88,8 +88,8 @@ export default function Dashboard() {
   
   // Calculate stats
   const teamsCreated = teams?.length || 0;
-  const totalPoints = teams?.reduce((sum, team) => sum + (team.totalPoints || 0), 0) || 0;
-  const matchesPlayed = new Set(teams?.map(team => team.matchId)).size || 0;
+  const totalPoints = teams?.reduce((sum, team: any) => sum + (team.totalPoints || 0), 0) || 0;
+  const matchesPlayed = new Set(teams?.map((team: any) => team.matchId)).size || 0;
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-orange-50">
@@ -207,7 +207,7 @@ export default function Dashboard() {
                   </div>
                 ) : teams && teams.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {teams.map((team) => (
+                    {teams.map((team: any) => (
                       <Card key={team.id} className="hover:shadow-lg transition-shadow border-2">
                         <CardHeader>
                           <CardTitle className="text-lg">{team.teamName}</CardTitle>
@@ -342,7 +342,7 @@ export default function Dashboard() {
                 ) : upcomingMatches.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {upcomingMatches.slice(0, 6).map((match) => {
-                      const userTeamsForMatch = teams?.filter(team => team.matchId === match.id) || [];
+                      const userTeamsForMatch = teams?.filter((team: any) => team.matchId === match.id) || [];
                       const hasTeam = userTeamsForMatch.length > 0;
                       
                       return (

@@ -392,8 +392,8 @@ export async function getUpcomingSeriesMatches(): Promise<CurrentMatch[]> {
     
     console.log(`[Cricket API] Found ${futureSeries.length} future series`);
     
-    // Fetch matches from first 3 future series (to avoid too many API calls)
-    const matchesPromises = futureSeries.slice(0, 3).map(series => getSeriesInfo(series.id));
+    // Fetch matches from first 30 future series (increased to get 100+ matches)
+    const matchesPromises = futureSeries.slice(0, 30).map(series => getSeriesInfo(series.id));
     const seriesInfos = await Promise.all(matchesPromises);
     
     // Extract matches from series
