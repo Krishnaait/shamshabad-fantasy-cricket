@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import { Menu, X, Trophy, User, LogOut, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,15 @@ interface HeaderProps {
   onLogout?: () => void;
 }
 
-export default function Header({ isAuthenticated = false, user, onLogout }: HeaderProps) {
+export default function Header({ isAuthenticated: propIsAuthenticated = false, user: propUser, onLogout: propOnLogout }: HeaderProps) {
+  // Use the useAuth hook to get real-time auth state from server
+  const { isAuthenticated: hookIsAuthenticated, user: hookUser, handleLogout: hookHandleLogout, isLoading } = useAuth();
+  
+  // Always use hook values - they check server auth status
+  const isAuthenticated = hookIsAuthenticated;
+  const user = hookUser;
+  const onLogout = hookHandleLogout;
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();

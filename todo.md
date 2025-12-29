@@ -365,12 +365,13 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [ ] Document any remaining issues
 
 
-## 🐛 Debug Dashboard Auth Issue (URGENT - Dec 29, 2025)
-- [ ] Add logging to Login.tsx to verify token is stored in localStorage
-- [ ] Add logging to main.tsx trpc client to verify Authorization header is sent
-- [ ] Add logging to sdk.authenticateRequest to track token validation
-- [ ] Test login flow and capture all logs
-- [ ] Identify exact point where token validation fails
+## 🔧 Header Auth Detection Fix (Dec 29, 2025)
+- [x] Updated useAuth hook to check server auth status via trpc.auth.me
+- [x] Updated Header to use useAuth hook directly for real-time auth detection
+- [x] Header now properly shows user dropdown when authenticated
+- [ ] Issue: Session cookie not persisting after page refresh
+- [ ] Need: Investigate Manus OAuth session management
+- [ ] Need: Test login flow with proper session handling
 - [ ] Fix token validation logic (likely JWT verification or user lookup)
 - [ ] Test complete login → dashboard flow without redirects
 - [ ] Remove debug logging after fix is confirmed
@@ -472,3 +473,16 @@ Users can now:
 ## ✅ Bug Fixes - Dec 29, 2025 (Team Builder Page) - FIXED
 - [x] Fix Error: No procedure found on path "team.getUserTeams" - Changed to team.getMyTeams
 - [x] Fix Error: <a> cannot contain a nested <a> - Removed nested anchors from Footer.tsx
+
+
+## 🚀 Dynamic Landing Page - Dec 29, 2025
+- [ ] Make landing page dynamic based on auth state
+- [ ] Show personalized welcome message for logged-in users
+- [ ] Display upcoming matches preview on home page
+- [ ] Add quick action buttons (Create Team, View Dashboard)
+- [ ] Show user stats summary on home page
+
+
+## 🚨 Header Bug - Dec 29, 2025
+- [ ] Fix: Login/Sign Up buttons still showing after user logs in
+- [ ] Header should show user profile dropdown instead of auth buttons when logged in

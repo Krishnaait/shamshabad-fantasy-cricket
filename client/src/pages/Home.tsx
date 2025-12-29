@@ -1,4 +1,4 @@
-import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight } from "lucide-react";
+import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight, LayoutDashboard, CalendarDays, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,11 @@ export default function Home() {
   
   // Fetch real-time matches from Cricket API
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  
+  // Fetch user's teams if logged in
+  const { data: userTeams } = trpc.team.getMyTeams.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   // Filter matches by actual status from Cricket API
   const allMatches = currentMatches || [];
@@ -218,41 +223,108 @@ export default function Home() {
         </div>
         
         <div className="container relative z-10 py-20">
-          <div className="max-w-3xl space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20">
-              <Trophy className="h-4 w-4 text-[oklch(0.65_0.2_45)]" />
-              India's Trusted Fantasy Cricket Platform
+          {isAuthenticated ? (
+            /* Personalized Hero for Logged-in Users */
+            <div className="max-w-4xl space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20">
+                <Trophy className="h-4 w-4 text-[oklch(0.65_0.2_45)]" />
+                Welcome back, {user?.name || 'Champion'}!
+              </div>
+              
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
+                Ready to Play?
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[oklch(0.55_0.16_145)] to-[oklch(0.65_0.2_45)]">
+                  {upcomingMatches.length} Matches Await!
+                </span>
+              </h1>
+              
+              {/* Quick Stats for Logged-in User */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="h-5 w-5 text-[oklch(0.65_0.2_45)]" />
+                    <span className="text-white/70 text-sm">My Teams</span>
+                  </div>
+                  <p className="text-3xl font-bold text-white">{userTeams?.length || 0}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="h-5 w-5 text-red-400" />
+                    <span className="text-white/70 text-sm">Live Now</span>
+                  </div>
+                  <p className="text-3xl font-bold text-white">{liveMatches.length}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CalendarDays className="h-5 w-5 text-primary" />
+                    <span className="text-white/70 text-sm">Upcoming</span>
+                  </div>
+                  <p className="text-3xl font-bold text-white">{upcomingMatches.length}</p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-5 w-5 text-[oklch(0.75_0.15_85)]" />
+                    <span className="text-white/70 text-sm">Total Points</span>
+                  </div>
+                  <p className="text-3xl font-bold text-white">
+                    {userTeams?.reduce((sum: number, team: any) => sum + (team.totalPoints || 0), 0) || 0}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
+                <Button size="lg" className="h-14 px-8 text-lg bg-gradient-to-r from-primary to-[oklch(0.55_0.16_145)] hover:opacity-90 transition-opacity" asChild>
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-5 w-5" />
+                    Go to Dashboard
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-white/30 text-white hover:bg-white/10 bg-white/5" asChild>
+                  <Link href="/contests">
+                    <Trophy className="mr-2 h-5 w-5" />
+                    Browse Contests
+                  </Link>
+                </Button>
+              </div>
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
-              Play Fantasy Cricket
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[oklch(0.55_0.16_145)] to-[oklch(0.65_0.2_45)]">
-                100% Free & Legal
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
-              Build your dream cricket team, compete with friends, and showcase your cricket knowledge. No entry fees, pure skill-based entertainment.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
-              <Button size="lg" className="h-14 px-8 text-lg bg-gradient-to-r from-primary to-[oklch(0.55_0.16_145)] hover:opacity-90 transition-opacity" asChild>
-                <Link href="/register">
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-white/30 text-white hover:bg-white/10 bg-white/5" asChild>
-                <Link href="/how-to-play">
-                  <Play className="mr-2 h-5 w-5" />
-                  Learn How To Play
-                </Link>
-              </Button>
+          ) : (
+            /* Default Hero for Non-logged-in Users */
+            <div className="max-w-3xl space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20">
+                <Trophy className="h-4 w-4 text-[oklch(0.65_0.2_45)]" />
+                India's Trusted Fantasy Cricket Platform
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
+                Play Fantasy Cricket
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[oklch(0.55_0.16_145)] to-[oklch(0.65_0.2_45)]">
+                  100% Free & Legal
+                </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-white/80 max-w-2xl leading-relaxed">
+                Build your dream cricket team, compete with friends, and showcase your cricket knowledge. No entry fees, pure skill-based entertainment.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
+                <Button size="lg" className="h-14 px-8 text-lg bg-gradient-to-r from-primary to-[oklch(0.55_0.16_145)] hover:opacity-90 transition-opacity" asChild>
+                  <Link href="/register">
+                    Get Started Free
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-white/30 text-white hover:bg-white/10 bg-white/5" asChild>
+                  <Link href="/how-to-play">
+                    <Play className="mr-2 h-5 w-5" />
+                    Learn How To Play
+                  </Link>
+                </Button>
+              </div>
             </div>
-            
-            {/* Stats section removed - no mock data */}
-          </div>
+          )}
         </div>
       </section>
 
