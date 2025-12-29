@@ -4,7 +4,7 @@ import { createServer } from "http";
 import net from "net";
 import cookieParser from "cookie-parser";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
+// OAuth removed - using only custom email/password authentication
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -49,8 +49,7 @@ async function startServer() {
     }
     next();
   });
-  // OAuth callback under /api/oauth/callback
-  registerOAuthRoutes(app);
+  // OAuth removed - using only custom email/password authentication
   // tRPC API
   app.use(
     "/api/trpc",

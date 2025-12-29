@@ -486,3 +486,33 @@ Users can now:
 ## 🚨 Header Bug - Dec 29, 2025
 - [ ] Fix: Login/Sign Up buttons still showing after user logs in
 - [ ] Header should show user profile dropdown instead of auth buttons when logged in
+
+
+## 🎯 Frontend Fixes - Dec 29, 2025 (PRIORITY)
+
+### Dashboard Fixes
+- [ ] Fix auth detection - ensure user stays logged in after page refresh
+- [ ] Display user name and stats correctly
+- [ ] Show "My Teams" section with user's created teams
+- [ ] Show "Live Matches" section with real-time status
+- [ ] Show "Upcoming Matches" with date filtering
+- [ ] Add "Create Team" buttons for each match
+- [ ] Fix loading states and error handling
+
+### Contests Page
+- [ ] Create /contests route
+- [ ] Design contests listing page
+- [ ] Add contest cards with prize pools and entry fees
+- [ ] Show number of participants
+- [ ] Add "Join Contest" button
+- [ ] Create contest details page (/contests/:contestId)
+- [ ] Add contest leaderboard
+
+### Upcoming Matches Display
+- [ ] Show all 117 upcoming matches (not just 6)
+- [ ] Add pagination or "Load More" button
+- [ ] Implement date-based filtering (Today, Tomorrow, This Week, Later)
+- [ ] Show match format (ODI, T20, Test)
+- [ ] Show match teams and venue
+- [ ] Add "Create Team" button for each match
+- [ ] Show match status (Upcoming, Live, Completed)

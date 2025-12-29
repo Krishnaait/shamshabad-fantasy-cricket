@@ -13,10 +13,17 @@ import Footer from "@/components/Footer";
 // Type for user teams
 interface UserTeam {
   id: number;
-  teamName: string;
+  userId: number;
+  contestId: number | null;
   matchId: string;
-  totalPoints?: number;
-  createdAt: string;
+  teamName: string;
+  captain: string | null;
+  viceCaptain: string | null;
+  totalPoints: number | null;
+  rank: number | null;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export default function Dashboard() {
@@ -142,9 +149,9 @@ export default function Dashboard() {
   };
   
   // Calculate stats
-  const teamsCreated = teams?.length || 0;
-  const totalPoints = teams?.reduce((sum: number, team: UserTeam) => sum + (team.totalPoints || 0), 0) || 0;
-  const matchesPlayed = new Set(teams?.map((team: UserTeam) => team.matchId)).size || 0;
+  const teamsCreated = (teams as UserTeam[] | undefined)?.length || 0;
+  const totalPoints = (teams as UserTeam[] | undefined)?.reduce((sum: number, team: UserTeam) => sum + (team.totalPoints || 0), 0) || 0;
+  const matchesPlayed = new Set((teams as UserTeam[] | undefined)?.map((team: UserTeam) => team.matchId)).size || 0;
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-orange-50">
