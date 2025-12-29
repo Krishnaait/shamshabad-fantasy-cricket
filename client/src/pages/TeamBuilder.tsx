@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,13 @@ export default function TeamBuilder() {
     matchId,
   });
 
+  // Debug logging
+  useEffect(() => {
+    console.log("[TeamBuilder] Squad Data:", squadData);
+    console.log("[TeamBuilder] Loading:", isLoading);
+    console.log("[TeamBuilder] Error:", error);
+  }, [squadData, isLoading, error]);
+
   // Create team mutation
   const createTeamMutation = trpc.team.createTeam.useMutation({
     onSuccess: () => {
@@ -51,13 +58,23 @@ export default function TeamBuilder() {
 
   // Extract players from squad data
   const allPlayers = useMemo(() => {
-    if (!squadData || !Array.isArray(squadData)) return [];
-    
+    if (!squadData) {
+      console.log("[TeamBuilder] No squad data");
+      return [];
+    }
+
+    if (!Array.isArray(squadData)) {
+      console.log("[TeamBuilder] Squad data is not an array:", typeof squadData);
+      return [];
+    }
+
     const players: Player[] = [];
-    
+
     // squadData is an array of SquadData (one for each team)
-    squadData.forEach((team) => {
-      if (team.players && Array.isArray(team.players)) {
+    squadData.forEach((team, teamIndex) => {
+      console.log(`[TeamBuilder] Processing team ${teamIndex}:`, team);
+
+      if (team && team.players && Array.isArray(team.players)) {
         team.players.forEach((player) => {
           players.push({
             playerId: player.id,
@@ -67,7 +84,8 @@ export default function TeamBuilder() {
         });
       }
     });
-    
+
+    console.log("[TeamBuilder] Total players extracted:", players.length);
     return players;
   }, [squadData]);
 
@@ -76,23 +94,36 @@ export default function TeamBuilder() {
     return {
       all: allPlayers,
       wk: allPlayers.filter((p) => p.role.toLowerCase().includes("keeper")),
-      bat: allPlayers.filter((p) => p.role.toLowerCase().includes("batsman") || p.role.toLowerCase().includes("batter")),
+      bat: allPlayers.filter(
+        (p) =>
+          p.role.toLowerCase().includes("batsman") ||
+          p.role.toLowerCase().includes("batter")
+      ),
       bowl: allPlayers.filter((p) => p.role.toLowerCase().includes("bowler")),
-      ar: allPlayers.filter((p) => p.role.toLowerCase().includes("allrounder") || p.role.toLowerCase().includes("all-rounder")),
+      ar: allPlayers.filter(
+        (p) =>
+          p.role.toLowerCase().includes("allrounder") ||
+          p.role.toLowerCase().includes("all-rounder")
+      ),
     };
   }, [allPlayers]);
 
   const handlePlayerSelect = (player: Player) => {
-    if (selectedPlayers.length >= 11 && !selectedPlayers.find((p) => p.playerId === player.playerId)) {
+    if (
+      selectedPlayers.length >= 11 &&
+      !selectedPlayers.find((p) => p.playerId === player.playerId)
+    ) {
       toast.error("You can only select 11 players");
       return;
     }
 
     const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
-    
+
     if (isSelected) {
       // Deselect player
-      setSelectedPlayers(selectedPlayers.filter((p) => p.playerId !== player.playerId));
+      setSelectedPlayers(
+        selectedPlayers.filter((p) => p.playerId !== player.playerId)
+      );
       if (captainId === player.playerId) setCaptainId(null);
       if (viceCaptainId === player.playerId) setViceCaptainId(null);
     } else {
@@ -108,30 +139,32 @@ export default function TeamBuilder() {
     }
   };
 
-  const handleSetCaptain = (playerId: string) => {
-    if (viceCaptainId === playerId) {
-      toast.error("Captain and vice-captain must be different");
-      return;
-    }
-    setCaptainId(playerId);
-  };
-
-  const handleSetViceCaptain = (playerId: string) => {
+  const handleCaptainSelect = (playerId: string) => {
     if (captainId === playerId) {
-      toast.error("Captain and vice-captain must be different");
-      return;
+      setCaptainId(null);
+    } else {
+      setCaptainId(playerId);
+      if (viceCaptainId === playerId) setViceCaptainId(null);
     }
-    setViceCaptainId(playerId);
   };
 
-  const handleSaveTeam = () => {
+  const handleViceCaptainSelect = (playerId: string) => {
+    if (viceCaptainId === playerId) {
+      setViceCaptainId(null);
+    } else {
+      setViceCaptainId(playerId);
+      if (captainId === playerId) setCaptainId(null);
+    }
+  };
+
+  const handleCreateTeam = () => {
     if (!teamName.trim()) {
       toast.error("Please enter a team name");
       return;
     }
 
     if (selectedPlayers.length !== 11) {
-      toast.error("Please select exactly 11 players");
+      toast.error("You must select exactly 11 players");
       return;
     }
 
@@ -146,7 +179,9 @@ export default function TeamBuilder() {
     }
 
     const playersWithRoles = selectedPlayers.map((player) => ({
-      ...player,
+      playerId: player.playerId,
+      playerName: player.playerName,
+      role: player.role,
       isCaptain: player.playerId === captainId,
       isViceCaptain: player.playerId === viceCaptainId,
     }));
@@ -170,17 +205,39 @@ export default function TeamBuilder() {
     );
   }
 
-  if (error || allPlayers.length === 0) {
+  if (error) {
+    console.error("[TeamBuilder] Error occurred:", error);
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <Card className="p-8 max-w-md text-center">
-            <h2 className="text-xl font-bold mb-2">Squad Data Not Available</h2>
+            <h2 className="text-xl font-bold mb-2">Error Loading Squad</h2>
+            <p className="text-muted-foreground mb-4">{error.message}</p>
+            <Button onClick={() => setLocation("/dashboard")}>
+              Back to Dashboard
+            </Button>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (allPlayers.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Card className="p-8 max-w-md text-center">
+            <h2 className="text-xl font-bold mb-2">No Players Available</h2>
             <p className="text-muted-foreground mb-4">
-              Squad information for this match is not available yet. Please try again later.
+              Squad information for this match is not available yet. Please try
+              again later.
             </p>
-            <Button onClick={() => setLocation("/dashboard")}>Back to Dashboard</Button>
+            <Button onClick={() => setLocation("/dashboard")}>
+              Back to Dashboard
+            </Button>
           </Card>
         </main>
         <Footer />
@@ -191,7 +248,7 @@ export default function TeamBuilder() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      
+
       <main className="flex-1 py-8">
         <div className="container">
           <Button
@@ -206,7 +263,8 @@ export default function TeamBuilder() {
           <div className="mb-6">
             <h1 className="text-3xl font-bold mb-2">Create Your Fantasy Team</h1>
             <p className="text-muted-foreground">
-              Select 11 players, choose your captain (2x points) and vice-captain (1.5x points)
+              Select 11 players, choose your captain (2x points) and
+              vice-captain (1.5x points)
             </p>
           </div>
 
@@ -216,77 +274,99 @@ export default function TeamBuilder() {
               <Card className="p-6">
                 <Tabs defaultValue="all">
                   <TabsList className="grid grid-cols-5 mb-6">
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="wk">WK ({playersByRole.wk.length})</TabsTrigger>
-                    <TabsTrigger value="bat">BAT ({playersByRole.bat.length})</TabsTrigger>
-                    <TabsTrigger value="ar">AR ({playersByRole.ar.length})</TabsTrigger>
-                    <TabsTrigger value="bowl">BOWL ({playersByRole.bowl.length})</TabsTrigger>
+                    <TabsTrigger value="all">
+                      All ({playersByRole.all.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="wk">
+                      WK ({playersByRole.wk.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="bat">
+                      BAT ({playersByRole.bat.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="ar">
+                      AR ({playersByRole.ar.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="bowl">
+                      BOWL ({playersByRole.bowl.length})
+                    </TabsTrigger>
                   </TabsList>
 
                   {["all", "wk", "bat", "ar", "bowl"].map((roleKey) => {
-                    const players = playersByRole[roleKey as keyof typeof playersByRole];
+                    const players =
+                      playersByRole[roleKey as keyof typeof playersByRole];
                     return (
-                      <TabsContent key={roleKey} value={roleKey} className="space-y-2">
+                      <TabsContent
+                        key={roleKey}
+                        value={roleKey}
+                        className="space-y-2"
+                      >
                         {players.length === 0 ? (
                           <div className="text-center py-8 text-muted-foreground">
                             <p>No players available in this category</p>
                           </div>
                         ) : (
                           players.map((player) => {
-                            const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
+                            const isSelected = selectedPlayers.find(
+                              (p) => p.playerId === player.playerId
+                            );
                             const isCaptain = captainId === player.playerId;
-                            const isViceCaptain = viceCaptainId === player.playerId;
+                            const isViceCaptain =
+                              viceCaptainId === player.playerId;
 
                             return (
                               <div
                                 key={player.playerId}
                                 className={`p-4 border rounded-lg flex items-center justify-between ${
-                                  isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted"
+                                  isSelected
+                                    ? "bg-primary/10 border-primary"
+                                    : "hover:bg-muted"
                                 }`}
                               >
                                 <div className="flex items-center gap-3">
                                   <Button
-                                    variant={isSelected ? "default" : "outline"}
+                                    variant={
+                                      isSelected ? "default" : "outline"
+                                    }
                                     size="sm"
                                     onClick={() => handlePlayerSelect(player)}
                                   >
-                                    {isSelected ? "Remove" : "Add"}
+                                    <User className="w-4 h-4" />
                                   </Button>
                                   <div>
-                                    <div className="font-medium flex items-center gap-2">
+                                    <p className="font-medium">
                                       {player.playerName}
-                                      {isCaptain && (
-                                        <Badge variant="default" className="text-xs">
-                                          <Trophy className="w-3 h-3 mr-1" />C
-                                        </Badge>
-                                      )}
-                                      {isViceCaptain && (
-                                        <Badge variant="secondary" className="text-xs">
-                                          <Star className="w-3 h-3 mr-1" />VC
-                                        </Badge>
-                                      )}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">{player.role}</div>
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {player.role}
+                                    </p>
                                   </div>
                                 </div>
 
                                 {isSelected && (
                                   <div className="flex gap-2">
                                     <Button
-                                      variant={isCaptain ? "default" : "outline"}
+                                      variant={
+                                        isCaptain ? "default" : "outline"
+                                      }
                                       size="sm"
-                                      onClick={() => handleSetCaptain(player.playerId)}
-                                      disabled={isCaptain}
+                                      onClick={() =>
+                                        handleCaptainSelect(player.playerId)
+                                      }
                                     >
-                                      <Trophy className="w-4 h-4" />
+                                      <Trophy className="w-4 h-4 mr-1" />
+                                      C
                                     </Button>
                                     <Button
-                                      variant={isViceCaptain ? "default" : "outline"}
+                                      variant={
+                                        isViceCaptain ? "default" : "outline"
+                                      }
                                       size="sm"
-                                      onClick={() => handleSetViceCaptain(player.playerId)}
-                                      disabled={isViceCaptain}
+                                      onClick={() =>
+                                        handleViceCaptainSelect(player.playerId)
+                                      }
                                     >
-                                      <Star className="w-4 h-4" />
+                                      <Star className="w-4 h-4 mr-1" />
+                                      VC
                                     </Button>
                                   </div>
                                 )}
@@ -301,44 +381,61 @@ export default function TeamBuilder() {
               </Card>
             </div>
 
-            {/* Selected Team */}
+            {/* Team Summary */}
             <div>
-              <Card className="p-6 sticky top-4">
-                <h2 className="text-xl font-bold mb-4">Your Team ({selectedPlayers.length}/11)</h2>
+              <Card className="p-6 sticky top-8">
+                <h2 className="text-xl font-bold mb-4">Your Team</h2>
 
-                <div className="space-y-4 mb-6">
-                  <div>
-                    <Label htmlFor="teamName">Team Name</Label>
-                    <Input
-                      id="teamName"
-                      placeholder="Enter team name"
-                      value={teamName}
-                      onChange={(e) => setTeamName(e.target.value)}
-                    />
+                <div className="mb-6">
+                  <Label htmlFor="teamName" className="mb-2 block">
+                    Team Name
+                  </Label>
+                  <Input
+                    id="teamName"
+                    value={teamName}
+                    onChange={(e) => setTeamName(e.target.value)}
+                    placeholder="Enter team name"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">
+                      Players Selected
+                    </span>
+                    <Badge
+                      variant={
+                        selectedPlayers.length === 11 ? "default" : "secondary"
+                      }
+                    >
+                      {selectedPlayers.length}/11
+                    </Badge>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
                     {selectedPlayers.length === 0 ? (
-                      <div className="text-center text-muted-foreground py-8">
-                        <User className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                        <p>No players selected</p>
-                      </div>
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        No players selected
+                      </p>
                     ) : (
                       selectedPlayers.map((player) => (
                         <div
                           key={player.playerId}
-                          className="flex items-center justify-between p-2 bg-muted rounded"
+                          className="text-sm p-2 bg-muted rounded flex justify-between items-center"
                         >
-                          <div className="text-sm">
-                            <div className="font-medium">{player.playerName}</div>
-                            <div className="text-xs text-muted-foreground">{player.role}</div>
+                          <span>{player.playerName}</span>
+                          <div className="flex gap-1">
+                            {captainId === player.playerId && (
+                              <Badge variant="default" className="text-xs">
+                                C
+                              </Badge>
+                            )}
+                            {viceCaptainId === player.playerId && (
+                              <Badge variant="secondary" className="text-xs">
+                                VC
+                              </Badge>
+                            )}
                           </div>
-                          {captainId === player.playerId && (
-                            <Badge variant="default" className="text-xs">C</Badge>
-                          )}
-                          {viceCaptainId === player.playerId && (
-                            <Badge variant="secondary" className="text-xs">VC</Badge>
-                          )}
                         </div>
                       ))
                     )}
@@ -346,8 +443,7 @@ export default function TeamBuilder() {
                 </div>
 
                 <Button
-                  className="w-full"
-                  onClick={handleSaveTeam}
+                  onClick={handleCreateTeam}
                   disabled={
                     selectedPlayers.length !== 11 ||
                     !captainId ||
@@ -355,11 +451,12 @@ export default function TeamBuilder() {
                     !teamName.trim() ||
                     createTeamMutation.isPending
                   }
+                  className="w-full"
                 >
                   {createTeamMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating Team...
+                      Creating...
                     </>
                   ) : (
                     "Create Team"

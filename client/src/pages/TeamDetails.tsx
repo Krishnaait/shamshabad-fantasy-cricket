@@ -195,14 +195,14 @@ export default function TeamDetails() {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Batting Stats */}
-                {scorecard.batting && scorecard.batting.length > 0 && (
+                {(scorecard as any).batting && (scorecard as any).batting.length > 0 && (
                   <Card>
                     <CardHeader>
                       <CardTitle>Batting</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {scorecard.batting.slice(0, 5).map((batter, idx) => (
+                        {(scorecard as any).batting.slice(0, 5).map((batter: any, idx: number) => (
                           <div key={idx} className="flex justify-between items-center pb-2 border-b last:border-0">
                             <div>
                               <p className="font-medium">{batter.name}</p>
@@ -220,14 +220,14 @@ export default function TeamDetails() {
                 )}
 
                 {/* Bowling Stats */}
-                {scorecard.bowling && scorecard.bowling.length > 0 && (
+                {(scorecard as any).bowling && (scorecard as any).bowling.length > 0 && (
                   <Card>
                     <CardHeader>
                       <CardTitle>Bowling</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {scorecard.bowling.slice(0, 5).map((bowler, idx) => (
+                        {(scorecard as any).bowling.slice(0, 5).map((bowler: any, idx: number) => (
                           <div key={idx} className="flex justify-between items-center pb-2 border-b last:border-0">
                             <div>
                               <p className="font-medium">{bowler.name}</p>
@@ -246,13 +246,13 @@ export default function TeamDetails() {
               </div>
 
               {/* Match Summary */}
-              {scorecard.summary && (
+              {(scorecard as any).summary && (
                 <Card className="mt-6">
                   <CardHeader>
                     <CardTitle>Match Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">{scorecard.summary}</p>
+                    <p className="text-muted-foreground">{(scorecard as any).summary}</p>
                   </CardContent>
                 </Card>
               )}
