@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin, Filter } from "lucide-react";
+import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin, Filter, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useInterval } from "@/hooks/useInterval";
 
 // Type for user teams
 interface UserTeam {
@@ -39,7 +40,15 @@ export default function Dashboard() {
   });
   
   // Get matches - use getCurrentMatches which includes both current and upcoming series matches
-  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
+  const { data: matches, isLoading: matchesLoading, refetch: refetchMatches } = trpc.cricket.getCurrentMatches.useQuery();
+  
+  // Auto-refresh matches every 30 seconds if enabled
+  useInterval(() => {
+    if (autoRefreshEnabled) {
+      refetchMatches();
+    }
+  }, autoRefreshEnabled ? 30000 : null);
   
   // Logout mutation
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -273,7 +282,7 @@ export default function Dashboard() {
                   </div>
                 ) : teams && teams.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {teams.map((team: UserTeam) => (
+                    {teams.map((team: any) => (
                       <Card key={team.id} className="hover:shadow-lg transition-shadow border-2">
                         <CardHeader>
                           <CardTitle className="text-lg">{team.teamName}</CardTitle>
@@ -347,7 +356,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {liveMatches.map((match) => (
+                    {liveMatches.map((match: any) => (
                       <Card key={match.id} className="border-red-500/30 bg-gradient-to-br from-red-50 to-orange-50">
                         <CardHeader>
                           <div className="flex items-start justify-between">
@@ -424,7 +433,7 @@ export default function Dashboard() {
                   </div>
                 ) : upcomingMatches.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {upcomingMatches.slice(0, 6).map((match) => {
+                    {upcomingMatches.slice(0, 6).map((match: any) => {
                       const userTeamsForMatch = teams?.filter((team: UserTeam) => team.matchId === match.id) || [];
                       const hasTeam = userTeamsForMatch.length > 0;
                       

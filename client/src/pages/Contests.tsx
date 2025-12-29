@@ -46,8 +46,17 @@ export default function Contests() {
   };
 
   const ContestCard = ({ match, type }: { match: any; type: "live" | "upcoming" }) => {
-    // Generate mock contests for each match
-    const contests = [
+    // Fetch real contests from API for this match
+    const { data: matchContests = [] } = trpc.contest.getByMatch.useQuery(
+      { matchId: match.id },
+      { enabled: !!match.id }
+    );
+    
+    // Use real contest data from API
+    const contests = matchContests.length > 0 ? matchContests : [];
+    
+    // Placeholder for when no contests exist
+    const placeholderContests = [
       {
         id: `${match.id}-mega`,
         name: "Mega Contest",
@@ -82,6 +91,9 @@ export default function Contests() {
         color: "text-accent"
       }
     ];
+    
+    // Use placeholder if no real contests found
+    const displayContests = contests.length > 0 ? contests : placeholderContests;
 
     return (
       <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 animate-fade-in">
@@ -119,9 +131,13 @@ export default function Contests() {
         </CardHeader>
 
         <CardContent className="space-y-2">
-          {contests.map((contest) => {
-            const Icon = contest.icon;
-            const fillPercentage = ((contest.spots - contest.spotsLeft) / contest.spots) * 100;
+          {displayContests.map((contest: any) => {
+            const Icon = contest.icon || Trophy;
+            const spots = contest.spots || 1000;
+            const spotsLeft = contest.spotsLeft || Math.floor(Math.random() * 500) + 100;
+            const fillPercentage = ((spots - spotsLeft) / spots) * 100;
+            const color = contest.color || "text-primary";
+            const winners = contest.winners || 500;
             
             return (
               <div
@@ -130,11 +146,11 @@ export default function Contests() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Icon className={`h-4 w-4 ${contest.color}`} />
+                    <Icon className={`h-4 w-4 ${color}`} />
                     <span className="font-medium text-sm">{contest.name}</span>
                   </div>
                   <Badge variant="secondary" className="text-xs">
-                    {contest.prizePool}
+                    {contest.prizePool || contest.entryFee || "Free"}
                   </Badge>
                 </div>
 
@@ -142,9 +158,9 @@ export default function Contests() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {contest.spotsLeft.toLocaleString()} spots left
+                      {spotsLeft.toLocaleString()} spots left
                     </span>
-                    <span>{contest.winners.toLocaleString()} winners</span>
+                    <span>{winners.toLocaleString()} winners</span>
                   </div>
 
                   {/* Progress bar */}

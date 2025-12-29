@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { ArrowLeft, Trophy, Star, Edit, Trash2, Users, BarChart3 } from "lucide-react";
+import { ArrowLeft, Trophy, Star, Edit, Trash2, Users, BarChart3, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { useInterval } from "@/hooks/useInterval";
 
 export default function TeamDetails() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -23,11 +24,19 @@ export default function TeamDetails() {
     { enabled: isAuthenticated && teamId > 0 }
   );
 
-  // Fetch match scorecard if match is ended
-  const { data: scorecard, isLoading: scorecardLoading } = trpc.cricket.getMatchScorecard.useQuery(
+  // Fetch match scorecard if match is ended or live
+  const { data: scorecard, isLoading: scorecardLoading, refetch: refetchScorecard } = trpc.cricket.getMatchScorecard.useQuery(
     { matchId: teamData?.team.matchId || "" },
-    { enabled: isAuthenticated && !!teamData?.team.matchId && teamData?.team.matchEnded }
+    { enabled: isAuthenticated && !!teamData?.team.matchId }
   );
+  
+  // Auto-refresh scorecard every 10 seconds if match is live
+  const isMatchLive = teamData?.team && !(teamData.team as any).matchEnded;
+  useInterval(() => {
+    if (isMatchLive) {
+      refetchScorecard();
+    }
+  }, isMatchLive ? 10000 : null);
 
   // Delete team mutation
   const deleteTeamMutation = trpc.team.deleteTeam.useMutation({
@@ -185,7 +194,7 @@ export default function TeamDetails() {
         </section>
 
         {/* Match Scorecard - Show if match is ended */}
-        {team.matchEnded && scorecard && (
+        {(team as any).matchEnded && scorecard && (
           <section className="py-8 px-4 bg-muted/50">
             <div className="container">
               <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">

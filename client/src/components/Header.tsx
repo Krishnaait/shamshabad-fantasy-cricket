@@ -20,7 +20,7 @@ import {
 
 interface HeaderProps {
   isAuthenticated?: boolean;
-  user?: { name?: string | null; email?: string | null };
+  user?: { name?: string | null; email?: string | null } | null;
   onLogout?: () => void;
 }
 

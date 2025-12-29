@@ -4,6 +4,7 @@ import { authRouter } from "./authRouter.js";
 import { cricketRouter } from "./cricketRouter.js";
 import { teamRouter } from "./teamRouter.js";
 import { pointsRouter } from "./pointsRouter.js";
+import { contestRouter } from "./contestRouter.js";
 
 export const appRouter = router({
   system: systemRouter,
@@ -11,6 +12,7 @@ export const appRouter = router({
   cricket: cricketRouter,
   team: teamRouter,
   points: pointsRouter,
+  contest: contestRouter,
 });
 
 export type AppRouter = typeof appRouter;
