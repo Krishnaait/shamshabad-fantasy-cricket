@@ -467,3 +467,8 @@ Users can now:
 - [x] Sort matches by date: Today first, then tomorrow, etc. - Live matches first, then by date
 - [x] Add date-based filtering UI to Dashboard - Filter dropdown with Today/Tomorrow/This Week/Later
 - [x] Matches now sorted chronologically with India vs New Zealand (Jan 2026) first
+
+
+## ✅ Bug Fixes - Dec 29, 2025 (Team Builder Page) - FIXED
+- [x] Fix Error: No procedure found on path "team.getUserTeams" - Changed to team.getMyTeams
+- [x] Fix Error: <a> cannot contain a nested <a> - Removed nested anchors from Footer.tsx

@@ -27,7 +27,7 @@ export default function Dashboard() {
   const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
   
   // Get user's teams
-  const { data: teams, isLoading: teamsLoading, refetch: refetchTeams } = trpc.team.getUserTeams.useQuery(undefined, {
+  const { data: teams, isLoading: teamsLoading, refetch: refetchTeams } = trpc.team.getMyTeams.useQuery(undefined, {
     enabled: !!user,
   });
   

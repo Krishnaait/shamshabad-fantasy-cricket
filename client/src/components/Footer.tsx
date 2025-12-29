@@ -87,10 +87,11 @@ export default function Footer() {
             <ul className="space-y-1.5 sm:space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
-                      {link.label}
-                    </a>
+                  <Link 
+                    href={link.href}
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -103,10 +104,11 @@ export default function Footer() {
             <ul className="space-y-1.5 sm:space-y-2">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
-                      {link.label}
-                    </a>
+                  <Link 
+                    href={link.href}
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -119,10 +121,11 @@ export default function Footer() {
             <ul className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
               {supportLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
-                      {link.label}
-                    </a>
+                  <Link 
+                    href={link.href}
+                    className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors inline-block"
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
