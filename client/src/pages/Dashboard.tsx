@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { MatchCardSkeletonGrid } from "@/components/MatchCardSkeleton";
 import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -129,53 +130,53 @@ export default function Dashboard() {
         <section className="py-8 px-4">
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card>
+              <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 animate-fade-in">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Teams Created</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <Users className="h-5 w-5 text-primary" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{teamsCreated}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold text-primary">{teamsCreated}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
                     Your fantasy teams
                   </p>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover-lift transition-smooth border-border/50 hover:border-accent/30 bg-gradient-to-br from-card to-accent/5 animate-fade-in" style={{animationDelay: '0.1s'}}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Matches Played</CardTitle>
-                  <Trophy className="h-4 w-4 text-muted-foreground" />
+                  <Trophy className="h-5 w-5 text-accent" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{matchesPlayed}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold text-accent">{matchesPlayed}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
                     Unique matches
                   </p>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover-lift transition-smooth border-border/50 hover:border-chart-3/30 bg-gradient-to-br from-card to-chart-3/5 animate-fade-in" style={{animationDelay: '0.2s'}}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Points</CardTitle>
-                  <Target className="h-4 w-4 text-muted-foreground" />
+                  <Target className="h-5 w-5 text-chart-3" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{totalPoints}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold text-chart-3">{totalPoints}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
                     Across all teams
                   </p>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 animate-fade-in" style={{animationDelay: '0.3s'}}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Upcoming</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Calendar className="h-5 w-5 text-primary" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{upcomingMatches.length}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold text-primary">{upcomingMatches.length}</div>
+                  <p className="text-xs text-muted-foreground mt-1">
                     Matches available
                   </p>
                 </CardContent>
