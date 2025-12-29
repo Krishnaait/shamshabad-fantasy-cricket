@@ -250,7 +250,7 @@ export default function Home() {
 
       {/* Live Matches Section */}
       {liveMatches.length > 0 && (
-        <section className="py-16 px-4 bg-gradient-to-b from-destructive/5 to-background">
+        <section className="py-16 px-4 bg-gradient-to-b from-destructive/5 to-background" style={{display: 'none'}}>
           <div className="container">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
