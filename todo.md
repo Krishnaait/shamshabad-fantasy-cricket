@@ -288,5 +288,78 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [ ] **ISSUE**: Dashboard redirects back to login after loading
 - [ ] **ROOT CAUSE**: Cookie domain/proxy issue with Manus subdomain
 - [ ] **TODO**: Add debug logging to track cookie flow
-- [ ] Save checkpoint with cookie-parser + dual auth fixes
+- [x] Save checkpoint with cookie-parser + dual auth fixes (f521c627)
+- [x] Deploy to GitHub (commit f521c62 pushed)
+- [ ] Trigger Railway redeploy (manual or wait for auto-deploy)
+- [ ] Test on Railway production after deployment
+
+
+## 🔨 Rebuild Dashboard & Remove Manus OAuth (Dec 29, 2025)
+- [x] Create new Dashboard.tsx from scratch without Manus OAuth
+- [x] Use only custom auth (trpc.auth.me.useQuery)
+- [x] Add proper loading states and error handling
+- [x] Display user info, matches, and teams
+- [x] Remove all Manus OAuth imports and references
+- [x] Search codebase for getLoginUrl, isOAuthConfigured, Manus OAuth
+- [x] Update const.ts to return /login instead of OAuth URL
+- [x] Set isOAuthConfigured to always return false
+- [ ] Test login → dashboard flow works correctly
+- [ ] Verify dashboard stays visible after login
 - [ ] Deploy to GitHub and Railway
+
+
+## 🎯 Final Polish & Production Deployment (Dec 29, 2025 - CURRENT PRIORITY)
+
+### ✅ What's Working on Railway Production
+- [x] Upcoming matches displaying correctly (6 matches from 2026 series)
+- [x] Homepage with cricket stadium background
+- [x] Registration flow working
+- [x] Match cards with proper formatting
+
+### 🔧 Dashboard Login Fix (IN PROGRESS)
+- [x] Implement localStorage token authentication (replace cookie-based auth)
+- [x] Update authRouter login to return token in response body
+- [x] Store token in localStorage on successful login
+- [x] Update trpc client to send Authorization header with token
+- [x] Update sdk.authenticateRequest to read from Authorization header
+- [ ] **ISSUE**: Dashboard still redirects to login after loading
+- [ ] **NEXT**: Recreate Dashboard page from scratch
+- [ ] Test login → dashboard flow without redirects
+- [ ] Verify token persists across page refreshes
+
+### 🎨 CSS & Design Improvements
+- [ ] Improve homepage hero section (better typography, spacing)
+- [ ] Enhance match card designs (shadows, borders, hover effects)
+- [ ] Add smooth transitions for all interactive elements
+- [ ] Improve button styles (gradients, hover states)
+- [ ] Add loading skeletons for match cards
+- [ ] Enhance mobile responsiveness (test on 375px, 768px, 1024px)
+- [ ] Improve color scheme consistency across all pages
+- [ ] Add subtle animations (fade-in, slide-up)
+- [ ] Enhance footer design
+- [ ] Improve form input styles
+
+### 📋 Contests Page
+- [ ] Check if Contests page exists in codebase
+- [ ] Create /contests route if missing
+- [ ] Design contests listing page
+- [ ] Add contest cards with prize pools
+- [ ] Connect contests to matches
+- [ ] Add "Join Contest" functionality
+- [ ] Create contest details page
+- [ ] Add contest leaderboard
+
+### 🚀 Final Testing & Deployment
+- [ ] Save checkpoint with all fixes
+- [ ] Run vitest tests to ensure nothing broke
+- [ ] Test complete user flow locally
+- [ ] Push to GitHub
+- [ ] Trigger Railway redeploy
+- [ ] Test on Railway production:
+  - [ ] Register new account
+  - [ ] Login successfully
+  - [ ] Dashboard displays without redirect
+  - [ ] Create fantasy team
+  - [ ] View team details
+  - [ ] Check all pages load correctly
+- [ ] Document any remaining issues

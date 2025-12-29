@@ -24,6 +24,11 @@ export default function Login() {
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: async (data) => {
       toast.success(data.message);
+      // Store token in localStorage for persistent auth
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+        console.log('[Login] Token stored in localStorage');
+      }
       // Invalidate auth cache to refetch user data
       await utils.auth.me.invalidate();
       setLocation("/dashboard");

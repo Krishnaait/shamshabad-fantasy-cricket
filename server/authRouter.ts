@@ -78,12 +78,25 @@ export const authRouter = router({
         throw new TRPCError({ code: "FORBIDDEN", message: "Account deactivated" });
       }
       const token = await generateToken(user.id, user.email);
+      console.log('[Auth] Generated token for user:', user.email);
       await createSession(user.id, token, ipAddress);
       const cookieOptions = getSessionCookieOptions(ctx.req);
+      console.log('[Auth] Cookie options:', JSON.stringify(cookieOptions));
+      console.log('[Auth] Setting cookie:', COOKIE_NAME);
       ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+      console.log('[Auth] Cookie set successfully');
       await logCompliance({ userId: user.id, action: "login_success", ipAddress, details: JSON.stringify({ email: input.email }) });
       const userWithProfile = await getUserWithProfile(user.id);
-      return { success: true, message: "Login successful", user: { id: user.id, email: user.email, name: userWithProfile?.profile?.fullName || user.name } };
+      return { 
+        success: true, 
+        message: "Login successful", 
+        token, // Return token for localStorage storage
+        user: { 
+          id: user.id, 
+          email: user.email, 
+          name: userWithProfile?.profile?.fullName || user.name 
+        } 
+      };
     }),
 
   logout: publicProcedure.mutation(async ({ ctx }) => {

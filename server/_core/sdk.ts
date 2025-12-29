@@ -257,13 +257,26 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
-    // Parse cookies
-    const cookies = this.parseCookies(req.headers.cookie);
-    const sessionCookie = cookies.get(COOKIE_NAME);
+    // Try to get token from Authorization header first (localStorage auth)
+    const authHeader = req.headers.authorization;
+    let token: string | undefined;
     
-    if (!sessionCookie) {
-      throw ForbiddenError("No session cookie found");
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7); // Remove 'Bearer ' prefix
+      console.log('[SDK] Token from Authorization header');
+    } else {
+      // Fallback to cookie-based auth
+      const cookies = this.parseCookies(req.headers.cookie);
+      token = cookies.get(COOKIE_NAME);
+      console.log('[SDK] Token from cookie');
     }
+    
+    if (!token) {
+      console.log('[SDK] No token found');
+      throw ForbiddenError("No session token found");
+    }
+    
+    const sessionCookie = token; // Rename for compatibility with rest of code
 
     // Try custom email/password auth first (JWT with userId)
     try {
