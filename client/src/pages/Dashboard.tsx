@@ -20,8 +20,8 @@ export default function Dashboard() {
     enabled: !!user,
   });
   
-  // Get matches
-  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getMatches.useQuery();
+  // Get matches (current + upcoming with ms field)
+  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
   
   // Logout mutation
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -83,8 +83,9 @@ export default function Dashboard() {
   
   // Categorize matches
   const liveMatches = matches?.filter(m => m.matchStarted && !m.matchEnded) || [];
-  const upcomingMatches = matches?.filter(m => !m.matchStarted) || [];
-  const completedMatches = matches?.filter(m => m.matchEnded) || [];
+  // Filter matches by status: 'fixture' = upcoming, 'live' = ongoing, 'result' = completed
+  const upcomingMatches = matches?.filter(m => m.ms === 'fixture') || [];
+  const completedMatches = matches?.filter(m => m.ms === 'result') || [];
   
   // Calculate stats
   const teamsCreated = teams?.length || 0;
@@ -363,7 +364,7 @@ export default function Dashboard() {
                           <CardContent className="space-y-3">
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Calendar className="h-4 w-4" />
-                              <span className="text-xs">{new Date(match.dateTimeGMT).toLocaleDateString()}</span>
+                              <span className="text-xs">{new Date(match.dateTimeGMT).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <MapPin className="h-4 w-4" />

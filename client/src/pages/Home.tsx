@@ -120,11 +120,13 @@ export default function Home() {
 
   const formatMatchDate = (dateTimeGMT: string) => {
     const date = new Date(dateTimeGMT);
+    // Convert to IST (GMT+5:30)
     return date.toLocaleDateString("en-IN", {
       day: "numeric",
       month: "short",
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: "Asia/Kolkata",
     });
   };
 

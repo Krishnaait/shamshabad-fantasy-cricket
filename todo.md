@@ -448,3 +448,19 @@ Users can now:
 - [x] Refetch upcoming matches from Cricket API
 - [x] Test match categorization (Live vs Upcoming)
 - [ ] Verify Railway production shows correct sections
+
+
+## 🐛 Fix Nested Anchor Tag Error (Dec 29, 2025)
+- [x] Find nested <a> tags in Header.tsx dropdown menu
+- [x] Fix by using onClick navigation instead of nested Link
+- [x] Test homepage to verify error is resolved
+- [x] Save checkpoint with fix
+## 🔧 Fix Upcoming Matches & Timezone (Dec 29, 2025)
+- [x] Expand getUpcomingSeriesMatches to fetch more series (increased from 3 to 10)
+- [x] Convert GMT time to IST timezone (GMT+5:30) for all match displays
+- [x] Update formatMatchDate function to show IST time
+- [x] Fix Dashboard to use getCurrentMatches endpoint instead of getMatches
+- [x] Fix match filtering to use ms field (fixture/live/result)
+- [x] Test Dashboard - NOW SHOWING 79 UPCOMING MATCHES!
+- [x] Test Homepage upcoming matches section
+- [x] Verify all matches displaying correctly with IST time
