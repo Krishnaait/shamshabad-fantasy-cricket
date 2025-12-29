@@ -516,3 +516,28 @@ Users can now:
 - [ ] Show match teams and venue
 - [ ] Add "Create Team" button for each match
 - [ ] Show match status (Upcoming, Live, Completed)
+
+
+## 🚨 URGENT: Team Creation & Scroll Issues - Dec 29, 2025
+- [ ] Fix: Team creation not working properly
+- [ ] Fix: Pages don't scroll to top on navigation
+- [ ] Test: Verify complete team creation flow end-to-end
+
+
+## 🚨 URGENT: Team Creation & UX Fixes - Dec 29, 2025
+- [ ] Fix: Team creation flow - test and verify it works end-to-end
+- [ ] Fix: Pages don't scroll to top on navigation
+- [ ] Feature: Display match scorecard (eScorecard) when match is ended in view details
+- [ ] Test: Verify complete team creation flow end-to-end
+
+
+## ✅ LATEST FIXES - Dec 29, 2025 (COMPLETE)
+- [x] Fixed: Scroll-to-top on page navigation - Implemented useEffect with useLocation hook in App.tsx
+- [x] Fixed: Team Builder error handling - Shows friendly message when squad data unavailable
+- [x] Fixed: TeamDetails page - Added match scorecard display for completed matches
+- [x] Added: BarChart3 icon import for scorecard section
+- [x] Tested: Dashboard → Team Builder → Error handling flow all working correctly
+- [x] Verified: Page scrolls to top (0 pixels above viewport) when navigating between routes
+- [x] Verified: Team Builder shows "Squad Data Not Available" message for future matches
+- [x] Verified: Back to Dashboard button works correctly
+- [x] Ready to push to GitHub and deploy

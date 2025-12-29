@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { ArrowLeft, Trophy, Star, Edit, Trash2, Users } from "lucide-react";
+import { ArrowLeft, Trophy, Star, Edit, Trash2, Users, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,12 @@ export default function TeamDetails() {
   const { data: teamData, isLoading: teamLoading } = trpc.team.getTeamDetails.useQuery(
     { teamId },
     { enabled: isAuthenticated && teamId > 0 }
+  );
+
+  // Fetch match scorecard if match is ended
+  const { data: scorecard, isLoading: scorecardLoading } = trpc.cricket.getMatchScorecard.useQuery(
+    { matchId: teamData?.team.matchId || "" },
+    { enabled: isAuthenticated && !!teamData?.team.matchId && teamData?.team.matchEnded }
   );
 
   // Delete team mutation
@@ -177,6 +183,82 @@ export default function TeamDetails() {
             </div>
           </div>
         </section>
+
+        {/* Match Scorecard - Show if match is ended */}
+        {team.matchEnded && scorecard && (
+          <section className="py-8 px-4 bg-muted/50">
+            <div className="container">
+              <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+                <BarChart3 className="h-6 w-6" />
+                Match Scorecard
+              </h2>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Batting Stats */}
+                {scorecard.batting && scorecard.batting.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Batting</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {scorecard.batting.slice(0, 5).map((batter, idx) => (
+                          <div key={idx} className="flex justify-between items-center pb-2 border-b last:border-0">
+                            <div>
+                              <p className="font-medium">{batter.name}</p>
+                              <p className="text-xs text-muted-foreground">{batter.role}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold">{batter.runs}</p>
+                              <p className="text-xs text-muted-foreground">({batter.balls}b)</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Bowling Stats */}
+                {scorecard.bowling && scorecard.bowling.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Bowling</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {scorecard.bowling.slice(0, 5).map((bowler, idx) => (
+                          <div key={idx} className="flex justify-between items-center pb-2 border-b last:border-0">
+                            <div>
+                              <p className="font-medium">{bowler.name}</p>
+                              <p className="text-xs text-muted-foreground">{bowler.role}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold">{bowler.wickets}/{bowler.runs}</p>
+                              <p className="text-xs text-muted-foreground">({bowler.overs}ov)</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* Match Summary */}
+              {scorecard.summary && (
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Match Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{scorecard.summary}</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Captain & Vice-Captain */}
         <section className="py-8 px-4">

@@ -34,7 +34,7 @@ export default function TeamBuilder() {
   const [viceCaptainId, setViceCaptainId] = useState<string | null>(null);
 
   // Fetch match squad
-  const { data: squadData, isLoading } = trpc.team.getMatchSquad.useQuery({
+  const { data: squadData, isLoading, error } = trpc.team.getMatchSquad.useQuery({
     matchId,
   });
 
@@ -170,6 +170,24 @@ export default function TeamBuilder() {
     );
   }
 
+  if (error || allPlayers.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Card className="p-8 max-w-md text-center">
+            <h2 className="text-xl font-bold mb-2">Squad Data Not Available</h2>
+            <p className="text-muted-foreground mb-4">
+              Squad information for this match is not available yet. Please try again later.
+            </p>
+            <Button onClick={() => setLocation("/dashboard")}>Back to Dashboard</Button>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -205,71 +223,80 @@ export default function TeamBuilder() {
                     <TabsTrigger value="bowl">BOWL ({playersByRole.bowl.length})</TabsTrigger>
                   </TabsList>
 
-                  {["all", "wk", "bat", "ar", "bowl"].map((roleKey) => (
-                    <TabsContent key={roleKey} value={roleKey} className="space-y-2">
-                      {playersByRole[roleKey as keyof typeof playersByRole].map((player) => {
-                        const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
-                        const isCaptain = captainId === player.playerId;
-                        const isViceCaptain = viceCaptainId === player.playerId;
-
-                        return (
-                          <div
-                            key={player.playerId}
-                            className={`p-4 border rounded-lg flex items-center justify-between ${
-                              isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <Button
-                                variant={isSelected ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => handlePlayerSelect(player)}
-                              >
-                                {isSelected ? "Remove" : "Add"}
-                              </Button>
-                              <div>
-                                <div className="font-medium flex items-center gap-2">
-                                  {player.playerName}
-                                  {isCaptain && (
-                                    <Badge variant="default" className="text-xs">
-                                      <Trophy className="w-3 h-3 mr-1" />C
-                                    </Badge>
-                                  )}
-                                  {isViceCaptain && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      <Star className="w-3 h-3 mr-1" />VC
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="text-sm text-muted-foreground">{player.role}</div>
-                              </div>
-                            </div>
-
-                            {isSelected && (
-                              <div className="flex gap-2">
-                                <Button
-                                  variant={isCaptain ? "default" : "outline"}
-                                  size="sm"
-                                  onClick={() => handleSetCaptain(player.playerId)}
-                                  disabled={isCaptain}
-                                >
-                                  <Trophy className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  variant={isViceCaptain ? "default" : "outline"}
-                                  size="sm"
-                                  onClick={() => handleSetViceCaptain(player.playerId)}
-                                  disabled={isViceCaptain}
-                                >
-                                  <Star className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            )}
+                  {["all", "wk", "bat", "ar", "bowl"].map((roleKey) => {
+                    const players = playersByRole[roleKey as keyof typeof playersByRole];
+                    return (
+                      <TabsContent key={roleKey} value={roleKey} className="space-y-2">
+                        {players.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <p>No players available in this category</p>
                           </div>
-                        );
-                      })}
-                    </TabsContent>
-                  ))}
+                        ) : (
+                          players.map((player) => {
+                            const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
+                            const isCaptain = captainId === player.playerId;
+                            const isViceCaptain = viceCaptainId === player.playerId;
+
+                            return (
+                              <div
+                                key={player.playerId}
+                                className={`p-4 border rounded-lg flex items-center justify-between ${
+                                  isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Button
+                                    variant={isSelected ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => handlePlayerSelect(player)}
+                                  >
+                                    {isSelected ? "Remove" : "Add"}
+                                  </Button>
+                                  <div>
+                                    <div className="font-medium flex items-center gap-2">
+                                      {player.playerName}
+                                      {isCaptain && (
+                                        <Badge variant="default" className="text-xs">
+                                          <Trophy className="w-3 h-3 mr-1" />C
+                                        </Badge>
+                                      )}
+                                      {isViceCaptain && (
+                                        <Badge variant="secondary" className="text-xs">
+                                          <Star className="w-3 h-3 mr-1" />VC
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <div className="text-sm text-muted-foreground">{player.role}</div>
+                                  </div>
+                                </div>
+
+                                {isSelected && (
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant={isCaptain ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => handleSetCaptain(player.playerId)}
+                                      disabled={isCaptain}
+                                    >
+                                      <Trophy className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant={isViceCaptain ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => handleSetViceCaptain(player.playerId)}
+                                      disabled={isViceCaptain}
+                                    >
+                                      <Star className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
+                        )}
+                      </TabsContent>
+                    );
+                  })}
                 </Tabs>
               </Card>
             </div>
