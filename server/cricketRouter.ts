@@ -18,8 +18,22 @@ export const cricketRouter = router({
         new Map(allMatches.map(match => [match.id, match])).values()
       );
       
-      console.log(`[Cricket Router] Returning ${uniqueMatches.length} total matches (${currentMatches.length} current + ${upcomingMatches.length} upcoming)`);
-      return uniqueMatches;
+      // Sort matches by date: Today first, then tomorrow, etc.
+      const sortedMatches = uniqueMatches.sort((a, b) => {
+        // First priority: Live matches (matchStarted but not matchEnded)
+        const aIsLive = a.matchStarted && !a.matchEnded;
+        const bIsLive = b.matchStarted && !b.matchEnded;
+        if (aIsLive && !bIsLive) return -1;
+        if (!aIsLive && bIsLive) return 1;
+        
+        // Second priority: Sort by date
+        const dateA = new Date(a.dateTimeGMT || a.date).getTime();
+        const dateB = new Date(b.dateTimeGMT || b.date).getTime();
+        return dateA - dateB;
+      });
+      
+      console.log(`[Cricket Router] Returning ${sortedMatches.length} total matches (${currentMatches.length} current + ${upcomingMatches.length} upcoming), sorted by date`);
+      return sortedMatches;
     } catch (error) {
       console.error("[Cricket Router] Error fetching matches:", error);
       throw new TRPCError({

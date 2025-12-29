@@ -459,3 +459,11 @@ Users can now:
 - [ ] Verify GitHub connection
 - [ ] Push code to GitHub if connected
 - [ ] Save checkpoint
+
+
+## ✅ Dashboard Issues - Dec 29, 2025 - FIXED
+- [x] Fix Header: Login/Signup buttons showing when user is logged in - Now shows user dropdown
+- [x] Show ALL matches (not just England vs Sri Lanka series) - Now shows 117 matches including India vs NZ
+- [x] Sort matches by date: Today first, then tomorrow, etc. - Live matches first, then by date
+- [x] Add date-based filtering UI to Dashboard - Filter dropdown with Today/Tomorrow/This Week/Later
+- [x] Matches now sorted chronologically with India vs New Zealand (Jan 2026) first

@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin, Filter } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -20,6 +21,7 @@ interface UserTeam {
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
+  const [dateFilter, setDateFilter] = useState<string>("all");
   
   // Get current user - this is our ONLY auth check
   const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
@@ -59,6 +61,55 @@ export default function Dashboard() {
     }
   }, [user, userLoading, setLocation]);
   
+  // Helper function to get date category (defined before useMemo)
+  const getDateCategory = (dateStr: string) => {
+    const matchDate = new Date(dateStr);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    
+    // Reset time for comparison
+    today.setHours(0, 0, 0, 0);
+    tomorrow.setHours(0, 0, 0, 0);
+    nextWeek.setHours(0, 0, 0, 0);
+    matchDate.setHours(0, 0, 0, 0);
+    
+    if (matchDate.getTime() === today.getTime()) return "today";
+    if (matchDate.getTime() === tomorrow.getTime()) return "tomorrow";
+    if (matchDate <= nextWeek) return "this_week";
+    return "later";
+  };
+  
+  // Categorize matches (must be before early returns for hooks consistency)
+  const liveMatches = useMemo(() => matches?.filter(m => m.matchStarted && !m.matchEnded) || [], [matches]);
+  const completedMatches = useMemo(() => matches?.filter(m => m.matchEnded) || [], [matches]);
+  
+  // Filter upcoming matches based on date filter
+  const upcomingMatches = useMemo(() => {
+    const upcoming = matches?.filter(m => !m.matchStarted) || [];
+    
+    if (dateFilter === "all") return upcoming;
+    
+    return upcoming.filter(m => {
+      const category = getDateCategory(m.dateTimeGMT || m.date);
+      return category === dateFilter;
+    });
+  }, [matches, dateFilter]);
+  
+  // Get counts for each filter category
+  const filterCounts = useMemo(() => {
+    const upcoming = matches?.filter(m => !m.matchStarted) || [];
+    return {
+      all: upcoming.length,
+      today: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "today").length,
+      tomorrow: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "tomorrow").length,
+      this_week: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "this_week").length,
+      later: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "later").length,
+    };
+  }, [matches]);
+  
   // Show loading state
   if (userLoading) {
     return (
@@ -90,11 +141,6 @@ export default function Dashboard() {
     }
   };
   
-  // Categorize matches
-  const liveMatches = matches?.filter(m => m.matchStarted && !m.matchEnded) || [];
-  const upcomingMatches = matches?.filter(m => !m.matchStarted) || [];
-  const completedMatches = matches?.filter(m => m.matchEnded) || [];
-  
   // Calculate stats
   const teamsCreated = teams?.length || 0;
   const totalPoints = teams?.reduce((sum: number, team: UserTeam) => sum + (team.totalPoints || 0), 0) || 0;
@@ -102,7 +148,11 @@ export default function Dashboard() {
   
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-orange-50">
-      <Header />
+      <Header 
+        isAuthenticated={!!user} 
+        user={user ? { name: user.name, email: user.email } : undefined}
+        onLogout={handleLogout}
+      />
       
       <main className="flex-1 pt-20 pb-12">
         {/* Welcome Section */}
@@ -331,16 +381,33 @@ export default function Dashboard() {
           <div className="container">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <CardTitle>Upcoming Matches</CardTitle>
                     <CardDescription>
                       Create your fantasy team for these matches
                     </CardDescription>
                   </div>
-                  {upcomingMatches.length > 0 && (
-                    <Badge variant="secondary">{upcomingMatches.length} Available</Badge>
-                  )}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-muted-foreground" />
+                      <Select value={dateFilter} onValueChange={setDateFilter}>
+                        <SelectTrigger className="w-[160px]">
+                          <SelectValue placeholder="Filter by date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Matches ({filterCounts.all})</SelectItem>
+                          <SelectItem value="today">Today ({filterCounts.today})</SelectItem>
+                          <SelectItem value="tomorrow">Tomorrow ({filterCounts.tomorrow})</SelectItem>
+                          <SelectItem value="this_week">This Week ({filterCounts.this_week})</SelectItem>
+                          <SelectItem value="later">Later ({filterCounts.later})</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {upcomingMatches.length > 0 && (
+                      <Badge variant="secondary">{upcomingMatches.length} Available</Badge>
+                    )}
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
