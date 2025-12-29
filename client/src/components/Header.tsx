@@ -110,13 +110,17 @@ export default function Header({ isAuthenticated = false, user, onLogout }: Head
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => window.location.href = '/dashboard'} className="cursor-pointer">
-                    <Trophy className="mr-2 h-4 w-4" />
-                    Dashboard
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="flex items-center w-full cursor-pointer">
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => window.location.href = '/profile'} className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center w-full cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onLogout} className="text-destructive cursor-pointer">

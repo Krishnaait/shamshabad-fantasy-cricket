@@ -215,10 +215,8 @@ export default function TeamBuilder() {
                         return (
                           <div
                             key={player.playerId}
-                            className={`p-4 border rounded-lg flex items-center justify-between transition-smooth animate-fade-in ${
-                              isSelected 
-                                ? "bg-gradient-to-r from-primary/10 to-primary/5 border-primary shadow-md" 
-                                : "hover:bg-muted hover:border-primary/30 hover:shadow-sm"
+                            className={`p-4 border rounded-lg flex items-center justify-between ${
+                              isSelected ? "bg-primary/10 border-primary" : "hover:bg-muted"
                             }`}
                           >
                             <div className="flex items-center gap-3">
@@ -302,24 +300,18 @@ export default function TeamBuilder() {
                       selectedPlayers.map((player) => (
                         <div
                           key={player.playerId}
-                          className="flex items-center justify-between p-3 bg-gradient-to-r from-muted to-muted/50 rounded-lg border border-border/50 hover:border-primary/30 transition-smooth animate-fade-in"
+                          className="flex items-center justify-between p-2 bg-muted rounded"
                         >
                           <div className="text-sm">
-                            <div className="font-medium flex items-center gap-2">
-                              {player.playerName}
-                              {captainId === player.playerId && (
-                                <Badge variant="default" className="text-xs">
-                                  <Trophy className="w-3 h-3 mr-1" />C (2x)
-                                </Badge>
-                              )}
-                              {viceCaptainId === player.playerId && (
-                                <Badge variant="secondary" className="text-xs">
-                                  <Star className="w-3 h-3 mr-1" />VC (1.5x)
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1">{player.role}</div>
+                            <div className="font-medium">{player.playerName}</div>
+                            <div className="text-xs text-muted-foreground">{player.role}</div>
                           </div>
+                          {captainId === player.playerId && (
+                            <Badge variant="default" className="text-xs">C</Badge>
+                          )}
+                          {viceCaptainId === player.playerId && (
+                            <Badge variant="secondary" className="text-xs">VC</Badge>
+                          )}
                         </div>
                       ))
                     )}

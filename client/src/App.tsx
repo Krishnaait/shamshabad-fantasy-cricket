@@ -22,6 +22,7 @@ import Dashboard from "./pages/Dashboard";
 import TeamBuilder from "./pages/TeamBuilder";
 import TeamDetails from "./pages/TeamDetails";
 import Profile from "./pages/Profile";
+import Contests from "./pages/Contests";
 
 function Router() {
   return (
@@ -41,6 +42,7 @@ function Router() {
       <Route path={"/register"} component={Register} />
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/contests"} component={Contests} />
       <Route path={"/team-builder/:matchId"} component={TeamBuilder} />
       <Route path={"/team/:teamId"} component={TeamDetails} />
       <Route path={"/profile"} component={Profile} />

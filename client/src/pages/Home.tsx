@@ -1,8 +1,7 @@
 import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MatchCardSkeletonGrid } from "@/components/MatchCardSkeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
@@ -121,18 +120,16 @@ export default function Home() {
 
   const formatMatchDate = (dateTimeGMT: string) => {
     const date = new Date(dateTimeGMT);
-    // Convert to IST (GMT+5:30)
     return date.toLocaleDateString("en-IN", {
       day: "numeric",
       month: "short",
       hour: "2-digit",
       minute: "2-digit",
-      timeZone: "Asia/Kolkata",
     });
   };
 
   const MatchCard = ({ match, type }: { match: any; type: "live" | "upcoming" | "completed" }) => (
-    <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/50 group overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm animate-fade-in">
+    <Card className="hover:shadow-xl transition-all duration-300 border-border/50 hover:border-primary/50 group overflow-hidden">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -252,6 +249,28 @@ export default function Home() {
       </section>
 
       {/* Live Matches Section */}
+      {liveMatches.length > 0 && (
+        <section className="py-16 px-4 bg-gradient-to-b from-destructive/5 to-background">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="h-3 w-3 bg-destructive rounded-full animate-pulse"></div>
+                <h2 className="text-3xl font-bold">Live Matches</h2>
+              </div>
+              <Badge variant="destructive" className="animate-pulse">
+                {liveMatches.length} Live Now
+              </Badge>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {liveMatches.slice(0, 3).map((match: any) => (
+                <MatchCard key={match.id} match={match} type="live" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Live Matches Section */}
       {displayLive.length > 0 && (
         <section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
           <div className="container">
@@ -293,7 +312,17 @@ export default function Home() {
           </div>
           
           {matchesLoading ? (
-            <MatchCardSkeletonGrid count={6} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardContent className="p-6">
+                    <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
+                    <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           ) : displayUpcoming.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayUpcoming.map((match: any) => (

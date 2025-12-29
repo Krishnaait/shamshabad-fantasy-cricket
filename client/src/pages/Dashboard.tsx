@@ -4,7 +4,6 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MatchCardSkeletonGrid } from "@/components/MatchCardSkeleton";
 import { Loader2, Trophy, Users, Target, LogOut, Eye, Trash2, Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -21,8 +20,8 @@ export default function Dashboard() {
     enabled: !!user,
   });
   
-  // Get matches (current + upcoming with ms field)
-  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  // Get matches
+  const { data: matches, isLoading: matchesLoading } = trpc.cricket.getMatches.useQuery();
   
   // Logout mutation
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -84,9 +83,8 @@ export default function Dashboard() {
   
   // Categorize matches
   const liveMatches = matches?.filter(m => m.matchStarted && !m.matchEnded) || [];
-  // Filter matches by status: 'fixture' = upcoming, 'live' = ongoing, 'result' = completed
-  const upcomingMatches = matches?.filter(m => m.ms === 'fixture') || [];
-  const completedMatches = matches?.filter(m => m.ms === 'result') || [];
+  const upcomingMatches = matches?.filter(m => !m.matchStarted) || [];
+  const completedMatches = matches?.filter(m => m.matchEnded) || [];
   
   // Calculate stats
   const teamsCreated = teams?.length || 0;
@@ -130,53 +128,53 @@ export default function Dashboard() {
         <section className="py-8 px-4">
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 animate-fade-in">
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Teams Created</CardTitle>
-                  <Users className="h-5 w-5 text-primary" />
+                  <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-primary">{teamsCreated}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-2xl font-bold">{teamsCreated}</div>
+                  <p className="text-xs text-muted-foreground">
                     Your fantasy teams
                   </p>
                 </CardContent>
               </Card>
               
-              <Card className="hover-lift transition-smooth border-border/50 hover:border-accent/30 bg-gradient-to-br from-card to-accent/5 animate-fade-in" style={{animationDelay: '0.1s'}}>
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Matches Played</CardTitle>
-                  <Trophy className="h-5 w-5 text-accent" />
+                  <Trophy className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-accent">{matchesPlayed}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-2xl font-bold">{matchesPlayed}</div>
+                  <p className="text-xs text-muted-foreground">
                     Unique matches
                   </p>
                 </CardContent>
               </Card>
               
-              <Card className="hover-lift transition-smooth border-border/50 hover:border-chart-3/30 bg-gradient-to-br from-card to-chart-3/5 animate-fade-in" style={{animationDelay: '0.2s'}}>
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Points</CardTitle>
-                  <Target className="h-5 w-5 text-chart-3" />
+                  <Target className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-chart-3">{totalPoints}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-2xl font-bold">{totalPoints}</div>
+                  <p className="text-xs text-muted-foreground">
                     Across all teams
                   </p>
                 </CardContent>
               </Card>
               
-              <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 animate-fade-in" style={{animationDelay: '0.3s'}}>
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Upcoming</CardTitle>
-                  <Calendar className="h-5 w-5 text-primary" />
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-primary">{upcomingMatches.length}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <div className="text-2xl font-bold">{upcomingMatches.length}</div>
+                  <p className="text-xs text-muted-foreground">
                     Matches available
                   </p>
                 </CardContent>
@@ -365,7 +363,7 @@ export default function Dashboard() {
                           <CardContent className="space-y-3">
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Calendar className="h-4 w-4" />
-                              <span className="text-xs">{new Date(match.dateTimeGMT).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}</span>
+                              <span className="text-xs">{new Date(match.dateTimeGMT).toLocaleDateString()}</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <MapPin className="h-4 w-4" />
