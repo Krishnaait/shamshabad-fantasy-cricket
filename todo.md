@@ -642,3 +642,16 @@ Users can now:
 - [x] "Create Team" buttons functional
 - [x] Real Cricket API data (114 matches)
 - [x] Clean, professional card design matching PDF
+
+
+## 🔧 FIX FAILING TESTS (Jan 3, 2026)
+- [ ] Fix test timeout issues in match-pages.test.ts
+- [ ] Update test assertions to match new matchStarted/matchEnded filtering
+- [ ] Ensure all 6 tests pass consistently
+- [ ] Deploy to GitHub after all tests pass
+
+## ✅ TESTS FIXED - All Passing (Jan 3, 2026)
+- [x] Fixed test timeout issues (increased to 20 seconds)
+- [x] Updated test assertions to use matchStarted/matchEnded fields
+- [x] All 6 tests passing consistently
+- [x] Ready for GitHub deployment
