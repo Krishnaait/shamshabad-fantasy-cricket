@@ -100,16 +100,16 @@ export default function Dashboard() {
   
   // Categorize matches (must be before early returns for hooks consistency)
   // Use 'ms' field from Cricket API: fixture=upcoming, live=live, result=completed
-  const liveMatches = useMemo(() => matches?.filter(m => m.ms === "live") || [], [matches]);
-  const completedMatches = useMemo(() => matches?.filter(m => m.ms === "result") || [], [matches]);
+  const liveMatches = useMemo(() => matches?.filter((m: any) => m.ms === "live") || [], [matches]);
+  const completedMatches = useMemo(() => matches?.filter((m: any) => m.ms === "result") || [], [matches]);
   
   // Filter upcoming matches based on date filter
   const upcomingMatches = useMemo(() => {
-    const upcoming = matches?.filter(m => m.ms === "fixture") || [];
+    const upcoming = matches?.filter((m: any) => m.ms === "fixture") || [];
     
     if (dateFilter === "all") return upcoming;
     
-    return upcoming.filter(m => {
+    return upcoming.filter((m: any) => {
       const category = getDateCategory(m.dateTimeGMT || m.date);
       return category === dateFilter;
     });
@@ -117,13 +117,13 @@ export default function Dashboard() {
   
   // Get counts for each filter category
   const filterCounts = useMemo(() => {
-    const upcoming = matches?.filter(m => m.ms === "fixture") || [];
+    const upcoming = matches?.filter((m: any) => m.ms === "fixture") || [];
     return {
       all: upcoming.length,
-      today: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "today").length,
-      tomorrow: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "tomorrow").length,
-      this_week: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "this_week").length,
-      later: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "later").length,
+      today: upcoming.filter((m: any) => getDateCategory(m.dateTimeGMT || m.date) === "today").length,
+      tomorrow: upcoming.filter((m: any) => getDateCategory(m.dateTimeGMT || m.date) === "tomorrow").length,
+      this_week: upcoming.filter((m: any) => getDateCategory(m.dateTimeGMT || m.date) === "this_week").length,
+      later: upcoming.filter((m: any) => getDateCategory(m.dateTimeGMT || m.date) === "later").length,
     };
   }, [matches]);
   
@@ -152,7 +152,7 @@ export default function Dashboard() {
     logoutMutation.mutate();
   };
   
-  const handleDeleteTeam = (teamId: number) => {
+  const handleDeleteTeam = (teamId: any) => {
     if (confirm("Are you sure you want to delete this team?")) {
       deleteTeamMutation.mutate({ teamId });
     }
@@ -283,7 +283,7 @@ export default function Dashboard() {
                   </div>
                 ) : teams && teams.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {teams.map((team: UserTeam) => (
+                    {teams.map((team: any) => (
                       <Card key={team.id} className="hover:shadow-lg transition-shadow border-2">
                         <CardHeader>
                           <CardTitle className="text-lg">{team.teamName}</CardTitle>

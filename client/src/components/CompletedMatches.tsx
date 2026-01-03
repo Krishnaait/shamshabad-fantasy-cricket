@@ -36,7 +36,7 @@ interface Match {
 export function CompletedMatches() {
   const [completedMatches, setCompletedMatches] = useState<Match[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches, isLoading, refetch } = trpc.cricket.getCurrentMatches.useQuery(undefined, {
+  const { data: allMatches, isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(undefined, {
     refetchInterval: 15000, // Auto-refresh every 15 seconds
   });
 

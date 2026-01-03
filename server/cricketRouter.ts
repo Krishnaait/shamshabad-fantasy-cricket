@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "./_core/trpc";
 import * as cricketApi from "./cricketApi";
-import * as cricketApiEnhanced from "./cricketApi-enhanced";
+import * as cricketApiFast from "./cricketApi-fast";
 
 export const cricketRouter = router({
   getCurrentMatches: publicProcedure.query(async () => {
@@ -114,7 +114,7 @@ export const cricketRouter = router({
     
   getAllMatchesComprehensive: publicProcedure.query(async () => {
     try {
-      const matches = await cricketApiEnhanced.getAllMatchesComprehensive();
+      const matches = await cricketApiFast.getAllMatches();
       return matches;
     } catch (error) {
       console.error("[Cricket Router] Error fetching comprehensive matches:", error);
@@ -129,7 +129,7 @@ export const cricketRouter = router({
     .input(z.object({ category: z.enum(["international", "domestic", "regional", "local"]) }))
     .query(async ({ input }) => {
       try {
-        const matches = await cricketApiEnhanced.getMatchesByCategory(input.category);
+        const matches = await cricketApiFast.getAllMatches();
         return matches;
       } catch (error) {
         throw new TRPCError({
@@ -143,7 +143,7 @@ export const cricketRouter = router({
     .input(z.object({ status: z.enum(["live", "fixture", "result"]) }))
     .query(async ({ input }) => {
       try {
-        const matches = await cricketApiEnhanced.getMatchesByStatus(input.status);
+        const matches = await cricketApiFast.getMatchesByStatus(input.status);
         return matches;
       } catch (error) {
         throw new TRPCError({
@@ -155,7 +155,7 @@ export const cricketRouter = router({
     
   getMatchStatistics: publicProcedure.query(async () => {
     try {
-      const stats = await cricketApiEnhanced.getMatchStatistics();
+      const stats = await cricketApiFast.getMatchStatistics();
       return stats;
     } catch (error) {
       throw new TRPCError({
@@ -169,7 +169,7 @@ export const cricketRouter = router({
     .input(z.object({ matchId: z.string() }))
     .query(async ({ input }) => {
       try {
-        const details = await cricketApiEnhanced.getMatchDetailedData(input.matchId);
+        const details = await cricketApi.getMatchSquad(input.matchId);
         return details;
       } catch (error) {
         throw new TRPCError({
@@ -183,7 +183,7 @@ export const cricketRouter = router({
     .input(z.object({ limit: z.number().optional() }))
     .query(async ({ input }) => {
       try {
-        const matches = await cricketApiEnhanced.getEnrichedMatches(input.limit || 100);
+        const matches = await cricketApiFast.getAllMatches();
         return matches;
       } catch (error) {
         throw new TRPCError({

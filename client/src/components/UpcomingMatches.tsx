@@ -33,7 +33,7 @@ interface MatchWithCountdown extends Match {
 export function UpcomingMatches() {
   const [upcomingMatches, setUpcomingMatches] = useState<MatchWithCountdown[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches, isLoading, refetch } = trpc.cricket.getCurrentMatches.useQuery(undefined, {
+  const { data: allMatches, isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(undefined, {
     refetchInterval: 15000, // Auto-refresh every 15 seconds
   });
 

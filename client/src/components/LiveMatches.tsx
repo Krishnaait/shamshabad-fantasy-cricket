@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,15 +35,16 @@ interface Match {
 export function LiveMatches() {
   const [liveMatches, setLiveMatches] = useState<Match[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches, isLoading, refetch } = trpc.cricket.getCurrentMatches.useQuery(undefined, {
-    refetchInterval: 15000, // Auto-refresh every 15 seconds
-  });
+  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(
+    { status: "live" },
+    {
+      refetchInterval: 15000, // Auto-refresh every 15 seconds
+    }
+  );
 
   useEffect(() => {
     if (allMatches) {
-      // Filter live matches
-      const live = allMatches.filter((match: Match) => match.ms === "live" || (match.matchStarted && !match.matchEnded));
-      setLiveMatches(live);
+      setLiveMatches(allMatches);
     }
   }, [allMatches]);
 
