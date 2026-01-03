@@ -716,3 +716,15 @@ Users can now:
 - [x] Test all match sections with real Cricket API data
 - [x] Fix TypeScript errors in Dashboard.tsx
 - [x] Push changes to GitHub
+
+
+## 🌍 Fetch All Cricket Matches (Domestic & Local) (Jan 3, 2026)
+- [ ] Enhance getAllSeries() to fetch ALL series (not just future ones)
+- [ ] Implement getAllMatches() to combine current + all series matches
+- [ ] Add filtering for domestic leagues (IPL, Big Bash, CPL, etc.)
+- [ ] Add filtering for regional/local tournaments
+- [ ] Update cricketRouter to use comprehensive match fetching
+- [ ] Test with real API to verify all match types are fetched
+- [ ] Update match display components to handle large dataset
+- [ ] Add pagination or infinite scroll for match lists
+- [ ] Push changes to GitHub

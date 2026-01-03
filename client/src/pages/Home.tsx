@@ -18,8 +18,10 @@ export default function Home() {
   // Use custom auth hook that checks localStorage immediately
   const { isAuthenticated, user, handleLogout } = useAuth();
   
-  // Fetch real-time matches from Cricket API
-  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  // Fetch comprehensive matches including all domestic and local tournaments
+  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatchesComprehensive.useQuery(undefined, {
+    refetchInterval: 15000,
+  });
   
   // Fetch user's teams if logged in
   const { data: userTeams } = trpc.team.getMyTeams.useQuery(undefined, {
@@ -30,12 +32,12 @@ export default function Home() {
   const allMatches = currentMatches || [];
   
   // Detect match status based on matchStarted/matchEnded boolean fields
-  const liveMatches = allMatches.filter((m: any) => m.matchStarted && !m.matchEnded);
-  const completedMatches = allMatches.filter((m: any) => m.matchEnded);
+  const liveMatches = allMatches.filter((m: any) => m.ms === 'live' || (m.matchStarted && !m.matchEnded));
+  const completedMatches = allMatches.filter((m: any) => m.ms === 'result' || m.matchEnded);
   
   // Sort upcoming matches by date/time (earliest first)
   const upcomingMatches = allMatches
-    .filter((m: any) => !m.matchStarted)
+    .filter((m: any) => m.ms === 'fixture' || (!m.matchStarted && !m.matchEnded))
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
       const dateB = new Date(b.dateTimeGMT || b.date).getTime();
