@@ -12,7 +12,7 @@ export default function CompletedMatches() {
   const { user } = useAuth();
 
   // Fetch completed matches
-  const { data: currentMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  const { data: currentMatches, isLoading } = trpc.cricket.getAllMatches.useQuery();
 
   // Filter and sort completed matches (most recent first)
   const completedMatches = ((currentMatches as any) || [])

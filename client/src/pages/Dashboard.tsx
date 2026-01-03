@@ -41,7 +41,7 @@ export default function Dashboard() {
   
   // Get matches - use getCurrentMatches which includes both current and upcoming series matches
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true);
-  const { data: matches, isLoading: matchesLoading, refetch: refetchMatches } = trpc.cricket.getCurrentMatches.useQuery();
+  const { data: matches, isLoading: matchesLoading, refetch: refetchMatches } = trpc.cricket.getAllMatches.useQuery();
   
   // Auto-refresh matches every 30 seconds if enabled
   useInterval(() => {

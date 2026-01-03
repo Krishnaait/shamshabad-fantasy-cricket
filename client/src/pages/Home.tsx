@@ -19,7 +19,7 @@ export default function Home() {
   const { isAuthenticated, user, handleLogout } = useAuth();
   
   // Fetch comprehensive matches including all domestic and local tournaments
-  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatchesComprehensive.useQuery(undefined, {
+  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatches.useQuery(undefined, {
     refetchInterval: 15000,
   });
   
@@ -187,7 +187,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 <Clock className="inline h-3 w-3 mr-1" />
-                {formatMatchDate(match.dateTimeGMT)}
+                {formatMatchDate(match.dateTimeGMTTimeGMT)}
               </span>
               {match.fantasyEnabled && (
                 <Button size="sm" className="h-7 text-xs" asChild>

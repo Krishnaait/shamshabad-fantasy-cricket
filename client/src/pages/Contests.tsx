@@ -18,7 +18,7 @@ export default function Contests() {
   // Use custom auth hook that checks localStorage immediately
   const { isAuthenticated, user, handleLogout } = useAuth();
   
-  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatches.useQuery();
 
   // Filter matches by status
   const allMatches = currentMatches || [];

@@ -12,7 +12,7 @@ export default function LiveMatches() {
   const { user } = useAuth();
 
   // Fetch live matches with auto-refresh every 10 seconds
-  const { data: currentMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery(
+  const { data: currentMatches, isLoading } = trpc.cricket.getAllMatches.useQuery(
     undefined,
     {
       refetchInterval: 10000, // Auto-refresh every 10 seconds

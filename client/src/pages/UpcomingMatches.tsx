@@ -14,7 +14,7 @@ export default function UpcomingMatches() {
   const { isAuthenticated, user } = useAuth();
 
   // Fetch matches from Cricket API (includes current + upcoming series matches)
-  const { data: allMatchesData, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  const { data: allMatchesData, isLoading } = trpc.cricket.getAllMatches.useQuery();
 
   // Extract matches from SuperJSON serialized data
   const allMatches = (allMatchesData as any)?.json || (allMatchesData as any) || [];
