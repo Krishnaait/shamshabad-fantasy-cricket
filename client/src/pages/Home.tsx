@@ -1,4 +1,4 @@
-import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight, LayoutDashboard, CalendarDays, Target } from "lucide-react";
+import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight, LayoutDashboard, CalendarDays, Target, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,12 +26,38 @@ export default function Home() {
   // Detect match status based on API 'ms' field (fixture/live/result)
   const liveMatches = allMatches.filter((m: any) => m.ms === "live");
   const completedMatches = allMatches.filter((m: any) => m.ms === "result");
-  const upcomingMatches = allMatches.filter((m: any) => m.ms === "fixture");
+  
+  // Sort upcoming matches by date/time (earliest first)
+  const upcomingMatches = allMatches
+    .filter((m: any) => m.ms === "fixture")
+    .sort((a: any, b: any) => {
+      const dateA = new Date(a.dateTimeGMT || a.date).getTime();
+      const dateB = new Date(b.dateTimeGMT || b.date).getTime();
+      return dateA - dateB;
+    });
   
   // Show first 6 of each category
   const displayUpcoming = upcomingMatches.slice(0, 6);
   const displayLive = liveMatches.slice(0, 6);
   const displayCompleted = completedMatches.slice(0, 6);
+  
+  // Get next upcoming match for countdown
+  const nextUpcomingMatch = upcomingMatches.length > 0 ? upcomingMatches[0] : null;
+  const getCountdownText = () => {
+    if (!nextUpcomingMatch) return "No upcoming matches scheduled";
+    const matchTime = new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date);
+    const now = new Date();
+    const diffMs = matchTime.getTime() - now.getTime();
+    
+    if (diffMs < 0) return "Match starting now";
+    
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) return `Next match in ${diffDays} day${diffDays > 1 ? 's' : ''}`;
+    if (diffHours > 0) return `Next match in ${diffHours} hour${diffHours > 1 ? 's' : ''}`;
+    return "Match starting soon";
+  };
 
   const features = [
     {
@@ -331,32 +357,47 @@ export default function Home() {
       )}
 
       {/* Live Matches Section */}
-      {displayLive.length > 0 && (
-        <section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
-          <div className="container">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <h2 className="text-3xl font-bold">Live Matches</h2>
+<section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
+        <div className="container">
+          {displayLive.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <h2 className="text-3xl font-bold">Live Matches</h2>
+                  </div>
                 </div>
+                <Button variant="outline" asChild>
+                  <Link href="/dashboard">
+                    View All
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
-              <Button variant="outline" asChild>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {displayLive.map((match: any) => (
+                  <MatchCard key={match.id} match={match} type="live" />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+                <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
+              </div>
+              <h2 className="text-3xl font-bold mb-2">No Live Matches Right Now</h2>
+              <p className="text-lg text-muted-foreground mb-4">{getCountdownText()}</p>
+              <Button asChild>
                 <Link href="/dashboard">
-                  View All
-                  <ChevronRight className="ml-1 h-4 w-4" />
+                  <Calendar className="mr-2 h-5 w-5" />
+                  View Upcoming Matches
                 </Link>
               </Button>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayLive.map((match: any) => (
-                <MatchCard key={match.id} match={match} type="live" />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* Upcoming Matches Section */}
       <section className="py-16 px-4 bg-secondary/30">
