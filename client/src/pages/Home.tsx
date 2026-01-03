@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { useCountdown } from "@/hooks/useCountdown";
 
 export default function Home() {
   // Use custom auth hook that checks localStorage immediately
@@ -43,21 +44,8 @@ export default function Home() {
   
   // Get next upcoming match for countdown
   const nextUpcomingMatch = upcomingMatches.length > 0 ? upcomingMatches[0] : null;
-  const getCountdownText = () => {
-    if (!nextUpcomingMatch) return "No upcoming matches scheduled";
-    const matchTime = new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date);
-    const now = new Date();
-    const diffMs = matchTime.getTime() - now.getTime();
-    
-    if (diffMs < 0) return "Match starting now";
-    
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-    
-    if (diffDays > 0) return `Next match in ${diffDays} day${diffDays > 1 ? 's' : ''}`;
-    if (diffHours > 0) return `Next match in ${diffHours} hour${diffHours > 1 ? 's' : ''}`;
-    return "Match starting soon";
-  };
+  const nextMatchDate = nextUpcomingMatch ? new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date) : null;
+  const countdown = useCountdown(nextMatchDate);
 
   const features = [
     {
@@ -245,6 +233,36 @@ export default function Home() {
                 </span>
               </h1>
               
+              
+              {/* Live Countdown Timer */}
+              {nextUpcomingMatch && !countdown.isExpired && (
+                <div className="bg-gradient-to-r from-primary/20 to-[oklch(0.65_0.2_45)]/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="h-5 w-5 text-[oklch(0.65_0.2_45)]" />
+                    <span className="text-white/90 text-sm font-medium">Next Match Starts In</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="text-center">
+                      <div className="text-3xl md:text-4xl font-bold text-white">{countdown.days}</div>
+                      <div className="text-xs text-white/70 mt-1">Days</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl md:text-4xl font-bold text-white">{countdown.hours}</div>
+                      <div className="text-xs text-white/70 mt-1">Hours</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl md:text-4xl font-bold text-white">{countdown.minutes}</div>
+                      <div className="text-xs text-white/70 mt-1">Minutes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl md:text-4xl font-bold text-white">{countdown.seconds}</div>
+                      <div className="text-xs text-white/70 mt-1">Seconds</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-white/80 mt-3 line-clamp-1">{nextUpcomingMatch.name}</p>
+                </div>
+              )}
+
               {/* Quick Stats for Logged-in User */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -387,7 +405,13 @@ export default function Home() {
                 <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
               </div>
               <h2 className="text-3xl font-bold mb-2">No Live Matches Right Now</h2>
-              <p className="text-lg text-muted-foreground mb-4">{getCountdownText()}</p>
+              {nextUpcomingMatch && !countdown.isExpired ? (
+                <p className="text-lg text-muted-foreground mb-4">
+                  Next match starts in {countdown.days > 0 && `${countdown.days}d `}{countdown.hours}h {countdown.minutes}m {countdown.seconds}s
+                </p>
+              ) : (
+                <p className="text-lg text-muted-foreground mb-4">No upcoming matches scheduled</p>
+              )}
               <Button asChild>
                 <Link href="/dashboard">
                   <Calendar className="mr-2 h-5 w-5" />

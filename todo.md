@@ -655,3 +655,32 @@ Users can now:
 - [x] Updated test assertions to use matchStarted/matchEnded fields
 - [x] All 6 tests passing consistently
 - [x] Ready for GitHub deployment
+
+## ⏱️ LIVE COUNTDOWN TIMER (Jan 3, 2026)
+- [ ] Create useCountdown hook with real-time updates
+- [ ] Add countdown timer to home page hero section
+- [ ] Display days, hours, minutes, seconds until next match
+- [ ] Test countdown accuracy
+- [ ] Deploy to GitHub
+
+## 🔄 RE-IMPLEMENT UPCOMING MATCHES PAGE (Jan 3, 2026)
+- [ ] Read PDF to extract exact requirements
+- [ ] Re-implement page with PDF-compliant layout
+- [ ] Ensure proper match card design
+- [ ] Add proper filtering and sorting
+- [ ] Test with real Cricket API data
+- [ ] Deploy to GitHub
+
+## 🐛 FIX UPCOMING MATCHES - Show All Matches (Jan 3, 2026)
+- [ ] Update Cricket API to use /matches endpoint
+- [ ] Implement pagination to fetch all matches
+- [ ] Filter upcoming matches properly
+- [ ] Test with real Cricket API data
+- [ ] Deploy to GitHub
+
+## ✅ COMPLETED - Countdown Timer (Jan 3, 2026)
+- [x] Create useCountdown hook for real-time countdown
+- [x] Integrate countdown timer into home page hero section
+- [x] Display days, hours, minutes, seconds until next match
+- [x] Show match name below countdown
+- [x] Test countdown timer updates every second

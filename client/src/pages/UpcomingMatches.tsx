@@ -12,11 +12,11 @@ import { useAuth } from "@/hooks/useAuth";
 export default function UpcomingMatches() {
   const { isAuthenticated, user } = useAuth();
 
-  // Fetch upcoming matches from Cricket API
-  const { data: currentMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  // Fetch matches from Cricket API (includes current + upcoming series matches)
+  const { data: allMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
 
   // Filter and sort upcoming matches
-  const upcomingMatches = ((currentMatches as any) || [])
+  const upcomingMatches = ((allMatches as any) || [])
     .filter((m: any) => !m.matchStarted)
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
