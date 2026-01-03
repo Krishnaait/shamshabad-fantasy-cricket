@@ -99,12 +99,13 @@ export default function Dashboard() {
   };
   
   // Categorize matches (must be before early returns for hooks consistency)
-  const liveMatches = useMemo(() => matches?.filter(m => m.matchStarted && !m.matchEnded) || [], [matches]);
-  const completedMatches = useMemo(() => matches?.filter(m => m.matchEnded) || [], [matches]);
+  // Use 'ms' field from Cricket API: fixture=upcoming, live=live, result=completed
+  const liveMatches = useMemo(() => matches?.filter(m => m.ms === "live") || [], [matches]);
+  const completedMatches = useMemo(() => matches?.filter(m => m.ms === "result") || [], [matches]);
   
   // Filter upcoming matches based on date filter
   const upcomingMatches = useMemo(() => {
-    const upcoming = matches?.filter(m => !m.matchStarted) || [];
+    const upcoming = matches?.filter(m => m.ms === "fixture") || [];
     
     if (dateFilter === "all") return upcoming;
     
@@ -116,7 +117,7 @@ export default function Dashboard() {
   
   // Get counts for each filter category
   const filterCounts = useMemo(() => {
-    const upcoming = matches?.filter(m => !m.matchStarted) || [];
+    const upcoming = matches?.filter(m => m.ms === "fixture") || [];
     return {
       all: upcoming.length,
       today: upcoming.filter(m => getDateCategory(m.dateTimeGMT || m.date) === "today").length,

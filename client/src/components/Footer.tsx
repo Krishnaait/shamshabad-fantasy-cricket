@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Trophy, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Trophy, Mail, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -137,13 +137,6 @@ export default function Footer() {
               >
                 <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span className="break-all">support@shamshabad.com</span>
-              </a>
-              <a
-                href="tel:+911234567890"
-                className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                <span>+91 123 456 7890</span>
               </a>
             </div>
           </div>

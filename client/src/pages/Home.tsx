@@ -23,30 +23,10 @@ export default function Home() {
   // Filter matches by actual status from Cricket API
   const allMatches = currentMatches || [];
   
-  // Detect match status based on API response
-  const liveMatches = allMatches.filter((m: any) => {
-    // Match is live if it has started but not ended, or status contains "live" keywords
-    const statusLower = (m.status || '').toLowerCase();
-    return statusLower.includes('live') || 
-           statusLower.includes('inning') || 
-           statusLower.includes('batting') ||
-           statusLower.includes('bowling') ||
-           (m.matchStarted && !m.matchEnded);
-  });
-  
-  const completedMatches = allMatches.filter((m: any) => {
-    const statusLower = (m.status || '').toLowerCase();
-    return statusLower.includes('won') || 
-           statusLower.includes('lost') ||
-           statusLower.includes('tied') ||
-           statusLower.includes('abandoned') ||
-           m.matchEnded;
-  });
-  
-  // Upcoming matches are those not live and not completed
-  const upcomingMatches = allMatches.filter((m: any) => {
-    return !liveMatches.includes(m) && !completedMatches.includes(m);
-  });
+  // Detect match status based on API 'ms' field (fixture/live/result)
+  const liveMatches = allMatches.filter((m: any) => m.ms === "live");
+  const completedMatches = allMatches.filter((m: any) => m.ms === "result");
+  const upcomingMatches = allMatches.filter((m: any) => m.ms === "fixture");
   
   // Show first 6 of each category
   const displayUpcoming = upcomingMatches.slice(0, 6);

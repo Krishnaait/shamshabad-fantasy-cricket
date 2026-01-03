@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,12 +43,6 @@ export default function Contact() {
       link: "mailto:support@shamshabad.com",
     },
     {
-      icon: Phone,
-      title: "Phone",
-      value: "+91 123 456 7890",
-      link: "tel:+911234567890",
-    },
-    {
       icon: MapPin,
       title: "Address",
       value: "C/O SHAMSHABAD CONVENT SCHOOL, 1st Floor, Sitaram Complex, Naya Bansh Road, Shamshabad, Agra, UP – 283125",
@@ -84,7 +78,7 @@ export default function Contact() {
         {/* Contact Info */}
         <section className="py-16 px-4">
           <div className="container">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {contactInfo.map((info, index) => {
                 const Icon = info.icon;
                 return (
