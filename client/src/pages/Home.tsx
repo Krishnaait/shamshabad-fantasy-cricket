@@ -10,6 +10,9 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useCountdown } from "@/hooks/useCountdown";
 import { formatIST } from "@/lib/timezone";
+import { LiveMatches } from "@/components/LiveMatches";
+import { UpcomingMatches } from "@/components/UpcomingMatches";
+import { CompletedMatches } from "@/components/CompletedMatches";
 
 export default function Home() {
   // Use custom auth hook that checks localStorage immediately
@@ -458,6 +461,15 @@ export default function Home() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Live, Upcoming, and Completed Matches Sections */}
+      <section className="py-20 px-4 bg-background">
+        <div className="container space-y-16">
+          <LiveMatches />
+          <UpcomingMatches />
+          <CompletedMatches />
         </div>
       </section>
 
