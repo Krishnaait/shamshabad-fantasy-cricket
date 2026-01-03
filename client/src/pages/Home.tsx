@@ -357,119 +357,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Matches Section */}
-      {liveMatches.length > 0 && (
-        <section className="py-16 px-4 bg-gradient-to-b from-destructive/5 to-background" style={{display: 'none'}}>
-          <div className="container">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="h-3 w-3 bg-destructive rounded-full animate-pulse"></div>
-                <h2 className="text-3xl font-bold">Live Matches</h2>
-              </div>
-              <Badge variant="destructive" className="animate-pulse">
-                {liveMatches.length} Live Now
-              </Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {liveMatches.slice(0, 3).map((match: any) => (
-                <MatchCard key={match.id} match={match} type="live" />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Live Matches Section */}
-<section className="py-16 px-4 bg-gradient-to-br from-red-500/10 to-orange-500/10">
-        <div className="container">
-          {displayLive.length > 0 ? (
-            <>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <h2 className="text-3xl font-bold">Live Matches</h2>
-                  </div>
-                </div>
-                <Button variant="outline" asChild>
-                  <Link href="/dashboard">
-                    View All
-                    <ChevronRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {displayLive.map((match: any) => (
-                  <MatchCard key={match.id} match={match} type="live" />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="text-center py-12">
-              <div className="h-16 w-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-                <div className="h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
-              </div>
-              <h2 className="text-3xl font-bold mb-2">No Live Matches Right Now</h2>
-              {nextUpcomingMatch && !countdown.isExpired ? (
-                <p className="text-lg text-muted-foreground mb-4">
-                  Next match starts in {countdown.days > 0 && `${countdown.days}d `}{countdown.hours}h {countdown.minutes}m {countdown.seconds}s
-                </p>
-              ) : (
-                <p className="text-lg text-muted-foreground mb-4">No upcoming matches scheduled</p>
-              )}
-              <Button asChild>
-                <Link href="/dashboard">
-                  <Calendar className="mr-2 h-5 w-5" />
-                  View Upcoming Matches
-                </Link>
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Upcoming Matches Section */}
-      <section className="py-16 px-4 bg-secondary/30">
-        <div className="container">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold">Upcoming Matches</h2>
-            <Button variant="outline" asChild>
-              <Link href="/dashboard">
-                View All
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-          
-          {matchesLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardContent className="p-6">
-                    <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
-                    <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-muted rounded w-1/2"></div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : displayUpcoming.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayUpcoming.map((match: any) => (
-                <MatchCard key={match.id} match={match} type="upcoming" />
-              ))}
-            </div>
-          ) : (
-            <Card className="text-center py-12">
-              <CardContent>
-                <Trophy className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No Upcoming Matches</h3>
-                <p className="text-muted-foreground">Check back soon for new matches!</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </section>
 
       {/* Action Banner with Batsman Image */}
       <section className="relative py-24 px-4 overflow-hidden">
@@ -609,22 +497,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recent Results */}
-      {displayCompleted.length > 0 && (
-        <section className="py-16 px-4 bg-background">
-          <div className="container">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold">Recent Results</h2>
-              <Badge variant="secondary">{completedMatches.length} Completed</Badge>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayCompleted.map((match: any) => (
-                <MatchCard key={match.id} match={match} type="completed" />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+
 
       <Footer />
     </div>

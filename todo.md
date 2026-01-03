@@ -691,3 +691,14 @@ Users can now:
 - [x] Update Home page countdown to show match time in IST
 - [x] Fix timezone conversion to use Asia/Kolkata locale
 - [x] Test timezone conversion accuracy
+
+
+## 🗑️ Remove Match Pages (Jan 3, 2026)
+- [ ] Remove UpcomingMatches page (/upcoming-matches)
+- [ ] Remove LiveMatches page (/live-matches)
+- [ ] Remove CompletedMatches page (/completed-matches)
+- [ ] Remove match page routes from App.tsx
+- [ ] Remove match sections from Homepage
+- [ ] Remove match sections from Dashboard
+- [ ] Test website after removal
+- [ ] Push changes to GitHub
