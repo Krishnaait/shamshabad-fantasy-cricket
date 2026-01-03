@@ -16,7 +16,7 @@ export default function CompletedMatches() {
 
   // Filter and sort completed matches (most recent first)
   const completedMatches = ((currentMatches as any) || [])
-    .filter((m: any) => m.ms === "result")
+    .filter((m: any) => m.matchEnded)
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
       const dateB = new Date(b.dateTimeGMT || b.date).getTime();

@@ -17,7 +17,7 @@ export default function UpcomingMatches() {
 
   // Filter and sort upcoming matches
   const upcomingMatches = ((currentMatches as any) || [])
-    .filter((m: any) => m.ms === "fixture")
+    .filter((m: any) => !m.matchStarted)
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
       const dateB = new Date(b.dateTimeGMT || b.date).getTime();

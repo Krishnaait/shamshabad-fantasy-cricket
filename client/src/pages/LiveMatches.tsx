@@ -20,7 +20,7 @@ export default function LiveMatches() {
   );
 
   // Filter live matches
-  const liveMatches = ((currentMatches as any) || []).filter((m: any) => m.ms === "live");
+  const liveMatches = ((currentMatches as any) || []).filter((m: any) => m.matchStarted && !m.matchEnded);
 
   const formatMatchDate = (dateTimeGMT: string, date: string) => {
     const matchDate = new Date(dateTimeGMT || date);

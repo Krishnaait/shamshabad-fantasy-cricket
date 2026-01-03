@@ -23,13 +23,13 @@ export default function Home() {
   // Filter matches by actual status from Cricket API
   const allMatches = currentMatches || [];
   
-  // Detect match status based on API 'ms' field (fixture/live/result)
-  const liveMatches = allMatches.filter((m: any) => m.ms === "live");
-  const completedMatches = allMatches.filter((m: any) => m.ms === "result");
+  // Detect match status based on matchStarted/matchEnded boolean fields
+  const liveMatches = allMatches.filter((m: any) => m.matchStarted && !m.matchEnded);
+  const completedMatches = allMatches.filter((m: any) => m.matchEnded);
   
   // Sort upcoming matches by date/time (earliest first)
   const upcomingMatches = allMatches
-    .filter((m: any) => m.ms === "fixture")
+    .filter((m: any) => !m.matchStarted)
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
       const dateB = new Date(b.dateTimeGMT || b.date).getTime();

@@ -12,7 +12,7 @@ describe("Match Pages - Real Data Integration", () => {
     expect(Array.isArray(liveMatches)).toBe(true);
   });
 
-  it("should fetch upcoming matches and sort by date", async () => {
+  it("should fetch upcoming matches and sort by date", { timeout: 15000 }, async () => {
     const apiKey = process.env.CRIC_API_KEY;
     const response = await fetch(
       `https://api.cricapi.com/v1/currentMatches?apikey=${apiKey}`
@@ -43,7 +43,7 @@ describe("Match Pages - Real Data Integration", () => {
     }
   });
 
-  it("should fetch completed matches correctly", async () => {
+  it("should fetch completed matches correctly", { timeout: 15000 }, async () => {
     const apiKey = process.env.CRIC_API_KEY;
     const response = await fetch(
       `https://api.cricapi.com/v1/currentMatches?apikey=${apiKey}`
@@ -97,7 +97,7 @@ describe("Match Pages - Real Data Integration", () => {
     }
   });
 
-  it("should have correct match status values", async () => {
+  it("should have correct match status values", { timeout: 15000 }, async () => {
     const apiKey = process.env.CRIC_API_KEY;
     const response = await fetch(
       `https://api.cricapi.com/v1/currentMatches?apikey=${apiKey}`
