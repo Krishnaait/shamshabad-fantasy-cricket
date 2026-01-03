@@ -72,9 +72,13 @@ export function CompletedMatches() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold text-white">🏆 Completed Matches</h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="text-3xl">🏆</div>
+          <div>
+            <h2 className="text-3xl font-bold text-white">Completed Matches</h2>
+            <p className="text-sm text-gray-400">Finished matches</p>
+          </div>
           <Badge variant="secondary" className="bg-yellow-900/50">
             {completedMatches.length}
           </Badge>
