@@ -1,9 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Trophy, Zap, RefreshCw, Clock } from "lucide-react";
+import { Zap, Clock, MapPin, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,10 +9,9 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LiveMatches() {
-  const { isAuthenticated, user } = useAuth();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const { user } = useAuth();
 
-  // Fetch live matches
+  // Fetch live matches with auto-refresh every 10 seconds
   const { data: currentMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery(
     undefined,
     {
@@ -23,69 +19,55 @@ export default function LiveMatches() {
     }
   );
 
-  const liveMatches = (currentMatches || []).filter((m: any) => m.ms === "live");
+  // Filter live matches
+  const liveMatches = ((currentMatches as any) || []).filter((m: any) => m.ms === "live");
 
-  const handleManualRefresh = () => {
-    setRefreshKey((prev) => prev + 1);
+  const formatMatchDate = (dateTimeGMT: string, date: string) => {
+    const matchDate = new Date(dateTimeGMT || date);
+    return matchDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <Header user={user} onLogout={() => {}} />
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-3xl font-bold text-white mb-4">Please Login</h1>
-          <p className="text-gray-400 mb-8">You need to be logged in to view live matches</p>
-          <Link href="/login">
-            <Button className="bg-green-600 hover:bg-green-700">Login</Button>
-          </Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gray-50">
       <Header user={user} onLogout={() => {}} />
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-              <Zap className="w-8 h-8 text-yellow-400" />
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+              <Zap className="w-8 h-8 text-red-600" />
               Live Matches
             </h1>
-            <p className="text-gray-400">
+            <p className="text-gray-600">
               {liveMatches.length} match{liveMatches.length !== 1 ? "es" : ""} currently live
             </p>
           </div>
-          <Button
-            onClick={handleManualRefresh}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
+          <Badge className="bg-red-600 animate-pulse">
+            <RefreshCw className="w-3 h-3 mr-1" />
+            Auto-updating
+          </Badge>
         </div>
 
+        {/* Loading State */}
         {isLoading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin">
-              <RefreshCw className="w-8 h-8 text-green-500" />
-            </div>
-            <p className="text-gray-400 mt-4">Loading live matches...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+            <p className="text-gray-600 mt-4">Loading live matches...</p>
           </div>
         )}
 
+        {/* No Live Matches State */}
         {!isLoading && liveMatches.length === 0 && (
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white">
             <CardContent className="pt-8 text-center">
-              <Clock className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Live Matches</h3>
-              <p className="text-gray-400 mb-6">Check back soon for live cricket action!</p>
+              <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Live Matches</h3>
+              <p className="text-gray-600 mb-6">Check back soon for live cricket action!</p>
               <Link href="/upcoming-matches">
                 <Button className="bg-green-600 hover:bg-green-700">View Upcoming Matches</Button>
               </Link>
@@ -93,93 +75,110 @@ export default function LiveMatches() {
           </Card>
         )}
 
-        {/* Live Matches Grid */}
+        {/* Match Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {liveMatches.map((match: any) => (
-            <Card
-              key={match.id}
-              className="bg-slate-800 border-slate-700 hover:border-green-500 transition-all hover:shadow-lg hover:shadow-green-500/20"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <Badge className="bg-red-600 mb-2 animate-pulse">LIVE</Badge>
-                    <CardTitle className="text-lg text-white">{match.name}</CardTitle>
-                    <p className="text-sm text-gray-400 mt-1">{match.venue}</p>
+            <Card key={match.id} className="bg-white hover:shadow-lg transition-shadow border-2 border-red-200">
+              <CardContent className="p-6">
+                {/* Live Badge */}
+                <Badge className="bg-red-600 mb-3 animate-pulse">
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                    LIVE
+                  </span>
+                </Badge>
+
+                {/* Match Title */}
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+                  {match.name}
+                </h3>
+
+                {/* Match Details */}
+                <div className="space-y-2 mb-4">
+                  {/* Date */}
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Clock className="w-4 h-4" />
+                    <span>{formatMatchDate(match.dateTimeGMT, match.date)}</span>
                   </div>
-                </div>
-              </CardHeader>
 
-              <CardContent>
-                {/* Team Flags and Scores */}
-                <div className="space-y-4">
-                  {match.teamInfo && match.teamInfo.length >= 2 && (
-                    <>
-                      {/* Team 1 */}
-                      <div className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
-                        <div className="flex items-center gap-3 flex-1">
-                          {match.teamInfo[0]?.img && (
-                            <img
-                              src={match.teamInfo[0].img}
-                              alt={match.teamInfo[0].name}
-                              className="w-10 h-10 rounded-full"
-                            />
-                          )}
-                          <div>
-                            <p className="text-white font-semibold">{match.teamInfo[0]?.name}</p>
-                            <p className="text-xs text-gray-400">{match.teamInfo[0]?.shortname}</p>
-                          </div>
-                        </div>
-                        {match.score && match.score[0] && (
-                          <div className="text-right">
-                            <p className="text-white font-bold">
-                              {match.score[0].r}/{match.score[0].w}
-                            </p>
-                            <p className="text-xs text-gray-400">{match.score[0].o} ov</p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Team 2 */}
-                      <div className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
-                        <div className="flex items-center gap-3 flex-1">
-                          {match.teamInfo[1]?.img && (
-                            <img
-                              src={match.teamInfo[1].img}
-                              alt={match.teamInfo[1].name}
-                              className="w-10 h-10 rounded-full"
-                            />
-                          )}
-                          <div>
-                            <p className="text-white font-semibold">{match.teamInfo[1]?.name}</p>
-                            <p className="text-xs text-gray-400">{match.teamInfo[1]?.shortname}</p>
-                          </div>
-                        </div>
-                        {match.score && match.score[1] && (
-                          <div className="text-right">
-                            <p className="text-white font-bold">
-                              {match.score[1].r}/{match.score[1].w}
-                            </p>
-                            <p className="text-xs text-gray-400">{match.score[1].o} ov</p>
-                          </div>
-                        )}
-                      </div>
-                    </>
+                  {/* Venue */}
+                  {match.venue && (
+                    <div className="flex items-start gap-2 text-sm text-gray-600">
+                      <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      <span className="line-clamp-2">{match.venue}</span>
+                    </div>
                   )}
                 </div>
 
+                {/* Team Scores */}
+                {match.teamInfo && match.teamInfo.length >= 2 && (
+                  <div className="space-y-2 mb-4">
+                    {/* Team 1 */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        {match.teamInfo[0]?.img && (
+                          <img
+                            src={match.teamInfo[0].img}
+                            alt={match.teamInfo[0].name}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        )}
+                        <span className="font-medium text-gray-900">
+                          {match.teamInfo[0]?.shortname}
+                        </span>
+                      </div>
+                      {match.score && match.score[0] && (
+                        <div className="text-right">
+                          <p className="font-bold text-gray-900">
+                            {match.score[0].r}/{match.score[0].w}
+                          </p>
+                          <p className="text-xs text-gray-600">{match.score[0].o} ov</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Team 2 */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        {match.teamInfo[1]?.img && (
+                          <img
+                            src={match.teamInfo[1].img}
+                            alt={match.teamInfo[1].name}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        )}
+                        <span className="font-medium text-gray-900">
+                          {match.teamInfo[1]?.shortname}
+                        </span>
+                      </div>
+                      {match.score && match.score[1] && (
+                        <div className="text-right">
+                          <p className="font-bold text-gray-900">
+                            {match.score[1].r}/{match.score[1].w}
+                          </p>
+                          <p className="text-xs text-gray-600">{match.score[1].o} ov</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Match Status */}
-                <div className="mt-4 p-3 bg-green-900/30 border border-green-700 rounded-lg">
-                  <p className="text-sm text-green-300 font-semibold">Status: {match.status}</p>
+                <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-center">
+                  <p className="text-sm font-medium text-green-700">{match.status}</p>
                 </div>
 
                 {/* Create Team Button */}
-                {match.fantasyEnabled && (
-                  <Link href={`/create-team/${match.id}`}>
-                    <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
+                {match.fantasyEnabled ? (
+                  <Link href={`/team-builder/${match.id}`}>
+                    <Button className="w-full bg-green-600 hover:bg-green-700">
                       Create Team
                     </Button>
                   </Link>
+                ) : (
+                  <Button className="w-full" variant="outline" disabled>
+                    Squad Not Available
+                  </Button>
                 )}
               </CardContent>
             </Card>
