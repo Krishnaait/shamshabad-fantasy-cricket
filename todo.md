@@ -684,3 +684,10 @@ Users can now:
 - [x] Display days, hours, minutes, seconds until next match
 - [x] Show match name below countdown
 - [x] Test countdown timer updates every second
+
+## ✅ COMPLETED - IST Timezone Conversion (Jan 3, 2026)
+- [x] Create timezone utility functions for GMT to IST conversion
+- [x] Update Upcoming Matches page to display times in IST
+- [x] Update Home page countdown to show match time in IST
+- [x] Fix timezone conversion to use Asia/Kolkata locale
+- [x] Test timezone conversion accuracy

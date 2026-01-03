@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { formatIST, formatTimeIST, formatDateIST } from "@/lib/timezone";
 
 export default function UpcomingMatches() {
   const { isAuthenticated, user } = useAuth();
@@ -25,20 +26,11 @@ export default function UpcomingMatches() {
     });
 
   const formatMatchDate = (dateTimeGMT: string, date: string) => {
-    const matchDate = new Date(dateTimeGMT || date);
-    return matchDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+    return formatDateIST(dateTimeGMT || date);
   };
 
   const formatMatchTime = (dateTimeGMT: string, date: string) => {
-    const matchDate = new Date(dateTimeGMT || date);
-    return matchDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return formatTimeIST(dateTimeGMT || date);
   };
 
   return (
@@ -102,7 +94,7 @@ export default function UpcomingMatches() {
                   {/* Time */}
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="w-4 h-4" />
-                    <span>{formatMatchTime(match.dateTimeGMT, match.date)}</span>
+                    <span>{formatMatchTime(match.dateTimeGMT, match.date)} IST</span>
                   </div>
 
                   {/* Venue */}

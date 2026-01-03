@@ -8,6 +8,7 @@ import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useCountdown } from "@/hooks/useCountdown";
+import { formatIST } from "@/lib/timezone";
 
 export default function Home() {
   // Use custom auth hook that checks localStorage immediately
@@ -260,6 +261,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-sm text-white/80 mt-3 line-clamp-1">{nextUpcomingMatch.name}</p>
+                  <p className="text-xs text-white/60 mt-1">{formatIST(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date)}</p>
                 </div>
               )}
 
