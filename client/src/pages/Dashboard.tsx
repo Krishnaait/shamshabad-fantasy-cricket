@@ -283,7 +283,7 @@ export default function Dashboard() {
                   </div>
                 ) : teams && teams.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {teams.map((team: any) => (
+                    {teams.map((team: UserTeam) => (
                       <Card key={team.id} className="hover:shadow-lg transition-shadow border-2">
                         <CardHeader>
                           <CardTitle className="text-lg">{team.teamName}</CardTitle>

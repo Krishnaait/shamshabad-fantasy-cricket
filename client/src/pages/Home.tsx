@@ -1,4 +1,5 @@
 import { Trophy, Users, Shield, TrendingUp, Zap, Award, ArrowRight, Clock, Star, Play, ChevronRight, LayoutDashboard, CalendarDays, Target, Calendar } from "lucide-react";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,9 +44,11 @@ export default function Home() {
   const displayLive = liveMatches.slice(0, 6);
   const displayCompleted = completedMatches.slice(0, 6);
   
-  // Get next upcoming match for countdown
+  // Get next upcoming match for countdown - memoize to prevent infinite loop
   const nextUpcomingMatch = upcomingMatches.length > 0 ? upcomingMatches[0] : null;
-  const nextMatchDate = nextUpcomingMatch ? new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date) : null;
+  const nextMatchDate = useMemo(() => {
+    return nextUpcomingMatch ? new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date) : null;
+  }, [nextUpcomingMatch?.id]); // Use match ID as dependency to prevent recreating Date object on every render
   const countdown = useCountdown(nextMatchDate);
 
   const features = [

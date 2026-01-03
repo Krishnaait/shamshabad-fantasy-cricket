@@ -14,10 +14,13 @@ export default function UpcomingMatches() {
   const { isAuthenticated, user } = useAuth();
 
   // Fetch matches from Cricket API (includes current + upcoming series matches)
-  const { data: allMatches, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
+  const { data: allMatchesData, isLoading } = trpc.cricket.getCurrentMatches.useQuery();
+
+  // Extract matches from SuperJSON serialized data
+  const allMatches = (allMatchesData as any)?.json || (allMatchesData as any) || [];
 
   // Filter and sort upcoming matches
-  const upcomingMatches = ((allMatches as any) || [])
+  const upcomingMatches = (Array.isArray(allMatches) ? allMatches : [])
     .filter((m: any) => !m.matchStarted)
     .sort((a: any, b: any) => {
       const dateA = new Date(a.dateTimeGMT || a.date).getTime();
