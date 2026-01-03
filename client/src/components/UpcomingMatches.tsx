@@ -11,8 +11,8 @@ interface Match {
   matchType: string;
   status: string;
   dateTimeGMT: string;
-  teams: string[];
-  teamInfo: Array<{
+  teams?: string[];
+  teamInfo?: Array<{
     name: string;
     shortname: string;
     img: string;
@@ -22,8 +22,6 @@ interface Match {
   t2?: string;
   t1img?: string;
   t2img?: string;
-  matchStarted?: boolean;
-  matchEnded?: boolean;
 }
 
 interface MatchWithCountdown extends Match {
@@ -33,9 +31,14 @@ interface MatchWithCountdown extends Match {
 export function UpcomingMatches() {
   const [upcomingMatches, setUpcomingMatches] = useState<MatchWithCountdown[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches, isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(undefined, {
-    refetchInterval: 15000, // Auto-refresh every 15 seconds
-  });
+  
+  // Fetch upcoming matches (fixture status)
+  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(
+    { status: "fixture" },
+    {
+      refetchInterval: 15000, // Auto-refresh every 15 seconds
+    }
+  );
 
   // Update countdown timers every second
   useEffect(() => {
@@ -52,36 +55,51 @@ export function UpcomingMatches() {
   }, []);
 
   useEffect(() => {
-    if (allMatches) {
-      // Filter upcoming matches (fixture state)
-      const upcoming = allMatches
-        .filter((match: Match) => match.ms === "fixture" && !match.matchStarted)
-        .map((match: Match) => ({
-          ...match,
-          countdown: calculateCountdown(match.dateTimeGMT),
-        }));
+    if (allMatches && Array.isArray(allMatches)) {
+      // Map API response to component format
+      const upcoming = allMatches.map((match: any) => ({
+        id: match.id || "",
+        name: match.name || "",
+        matchType: match.matchType || "T20",
+        status: match.status || "",
+        dateTimeGMT: match.dateTimeGMT || "",
+        teams: match.teams || [],
+        teamInfo: match.teamInfo || [],
+        ms: match.ms || "fixture",
+        t1: match.t1 || "",
+        t2: match.t2 || "",
+        t1img: match.t1img || "",
+        t2img: match.t2img || "",
+        countdown: calculateCountdown(match.dateTimeGMT || ""),
+      }));
       setUpcomingMatches(upcoming);
     }
   }, [allMatches]);
 
   const calculateCountdown = (dateTimeGMT: string): string => {
-    const matchTime = new Date(dateTimeGMT).getTime();
-    const now = new Date().getTime();
-    const diff = matchTime - now;
+    if (!dateTimeGMT) return "Time TBA";
+    
+    try {
+      const matchTime = new Date(dateTimeGMT).getTime();
+      const now = new Date().getTime();
+      const diff = matchTime - now;
 
-    if (diff <= 0) return "Starting soon...";
+      if (diff <= 0) return "Starting soon...";
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    if (days > 0) {
-      return `${days}d ${hours}h ${minutes}m`;
-    } else if (hours > 0) {
-      return `${hours}h ${minutes}m ${seconds}s`;
-    } else {
-      return `${minutes}m ${seconds}s`;
+      if (days > 0) {
+        return `${days}d ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        return `${minutes}m ${seconds}s`;
+      }
+    } catch (error) {
+      return "Time TBA";
     }
   };
 
@@ -149,7 +167,7 @@ export function UpcomingMatches() {
                       {match.t1img && (
                         <img src={match.t1img} alt={match.t1} className="w-8 h-8 rounded-full" />
                       )}
-                      <span className="text-sm font-semibold text-white truncate">{match.t1 || match.teams?.[0]}</span>
+                      <span className="text-sm font-semibold text-white truncate">{match.t1 || match.teams?.[0] || "Team 1"}</span>
                     </div>
                   </div>
 
@@ -161,7 +179,7 @@ export function UpcomingMatches() {
                       {match.t2img && (
                         <img src={match.t2img} alt={match.t2} className="w-8 h-8 rounded-full" />
                       )}
-                      <span className="text-sm font-semibold text-white truncate">{match.t2 || match.teams?.[1]}</span>
+                      <span className="text-sm font-semibold text-white truncate">{match.t2 || match.teams?.[1] || "Team 2"}</span>
                     </div>
                   </div>
                 </div>

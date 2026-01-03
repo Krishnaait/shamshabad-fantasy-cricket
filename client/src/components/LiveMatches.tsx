@@ -11,8 +11,8 @@ interface Match {
   matchType: string;
   status: string;
   dateTimeGMT: string;
-  teams: string[];
-  teamInfo: Array<{
+  teams?: string[];
+  teamInfo?: Array<{
     name: string;
     shortname: string;
     img: string;

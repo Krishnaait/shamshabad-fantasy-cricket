@@ -7,7 +7,7 @@ import { trpc } from "@/lib/trpc";
 
 export function DynamicHeader() {
   const { user, isLoading } = useAuth();
-  const [, navigate] = useRouter();
+  const [, navigate] = useRouter() as unknown as [string, (path: string) => void];
   const logout = trpc.auth.logout.useMutation({
     onSuccess: () => {
       navigate("/");

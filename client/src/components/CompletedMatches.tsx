@@ -11,8 +11,8 @@ interface Match {
   matchType: string;
   status: string;
   dateTimeGMT: string;
-  teams: string[];
-  teamInfo: Array<{
+  teams?: string[];
+  teamInfo?: Array<{
     name: string;
     shortname: string;
     img: string;
@@ -36,19 +36,19 @@ interface Match {
 export function CompletedMatches() {
   const [completedMatches, setCompletedMatches] = useState<Match[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches, isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(undefined, {
-    refetchInterval: 15000, // Auto-refresh every 15 seconds
-  });
+  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(
+    { status: "result" },
+    {
+      refetchInterval: 15000, // Auto-refresh every 15 seconds
+    }
+  );
 
   useEffect(() => {
-    if (allMatches) {
-      // Filter completed matches (result state)
-      const completed = allMatches
-        .filter((match: Match) => match.ms === "result" || match.matchEnded)
-        .sort((a: Match, b: Match) => {
-          // Sort by date, newest first
-          return new Date(b.dateTimeGMT).getTime() - new Date(a.dateTimeGMT).getTime();
-        });
+    if (allMatches && Array.isArray(allMatches)) {
+      // Sort by date, newest first
+      const completed = [...allMatches].sort((a: any, b: any) => {
+        return new Date(b.dateTimeGMT).getTime() - new Date(a.dateTimeGMT).getTime();
+      });
       setCompletedMatches(completed);
     }
   }, [allMatches]);

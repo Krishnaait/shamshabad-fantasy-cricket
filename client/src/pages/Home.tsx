@@ -39,8 +39,8 @@ export default function Home() {
   const upcomingMatches = allMatches
     .filter((m: any) => m.ms === 'fixture' || (!m.matchStarted && !m.matchEnded))
     .sort((a: any, b: any) => {
-      const dateA = new Date(a.dateTimeGMT || a.date).getTime();
-      const dateB = new Date(b.dateTimeGMT || b.date).getTime();
+      const dateA = new Date(a.dateTimeGMT || "").getTime();
+      const dateB = new Date(b.dateTimeGMT || "").getTime();
       return dateA - dateB;
     });
   
@@ -52,7 +52,9 @@ export default function Home() {
   // Get next upcoming match for countdown - memoize to prevent infinite loop
   const nextUpcomingMatch = upcomingMatches.length > 0 ? upcomingMatches[0] : null;
   const nextMatchDate = useMemo(() => {
-    return nextUpcomingMatch ? new Date(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date) : null;
+    if (!nextUpcomingMatch) return null;
+    const dateStr = nextUpcomingMatch.dateTimeGMT || "";
+    return dateStr ? new Date(dateStr) : null;
   }, [nextUpcomingMatch?.id]); // Use match ID as dependency to prevent recreating Date object on every render
   const countdown = useCountdown(nextMatchDate);
 
@@ -187,7 +189,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 <Clock className="inline h-3 w-3 mr-1" />
-                {formatMatchDate(match.dateTimeGMTTimeGMT)}
+                {formatMatchDate(match.dateTimeGMTTimeGMTTimeGMT)}
               </span>
               {match.fantasyEnabled && (
                 <Button size="sm" className="h-7 text-xs" asChild>
@@ -269,7 +271,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="text-sm text-white/80 mt-3 line-clamp-1">{nextUpcomingMatch.name}</p>
-                  <p className="text-xs text-white/60 mt-1">{formatIST(nextUpcomingMatch.dateTimeGMT || nextUpcomingMatch.date)}</p>
+                  <p className="text-xs text-white/60 mt-1">{formatIST(nextUpcomingMatch.dateTimeGMT || "")}</p>
                 </div>
               )}
 
