@@ -203,11 +203,13 @@ export async function getMatchStatistics() {
 
 /**
  * Get live score for a specific match
+ * Enhanced to provide better mapping and fallbacks
  */
 export async function getLiveScore(matchId: string) {
   try {
+    // 1. Try cricScore with matchId filter
     const res = await fetch(
-      `https://api.cricapi.com/v1/cricScore?apikey=${CRIC_API_KEY}&matchId=${matchId}`,
+      `https://api.cricapi.com/v1/cricScore?apikey=${CRIC_API_KEY}`,
       { signal: AbortSignal.timeout(10000) }
     );
 
@@ -216,7 +218,55 @@ export async function getLiveScore(matchId: string) {
     }
 
     const data = await res.json();
-    return data.data || null;
+    const match = data.data?.find((m: any) => m.id === matchId);
+    
+    if (match) {
+      return {
+        id: match.id,
+        name: match.name,
+        matchType: match.matchType,
+        status: match.status,
+        venue: match.venue || "Venue not specified",
+        dateTimeGMT: match.dateTimeGMT,
+        t1: match.t1,
+        t2: match.t2,
+        t1img: match.t1img,
+        t2img: match.t2img,
+        t1s: match.t1s || "0/0",
+        t2s: match.t2s || "0/0",
+        ms: match.ms
+      };
+    }
+
+    // 2. Fallback: Check currentMatches for more detail
+    const currentRes = await fetch(
+      `https://api.cricapi.com/v1/currentMatches?apikey=${CRIC_API_KEY}`,
+      { signal: AbortSignal.timeout(10000) }
+    );
+    
+    if (currentRes.ok) {
+      const currentData = await currentRes.json();
+      const currentMatch = currentData.data?.find((m: any) => m.id === matchId);
+      if (currentMatch) {
+        return {
+          id: currentMatch.id,
+          name: currentMatch.name,
+          matchType: currentMatch.matchType,
+          status: currentMatch.status,
+          venue: currentMatch.venue || "Venue not specified",
+          dateTimeGMT: currentMatch.dateTimeGMT,
+          t1: currentMatch.teams?.[0] || "",
+          t2: currentMatch.teams?.[1] || "",
+          t1img: currentMatch.teamInfo?.[0]?.img || "",
+          t2img: currentMatch.teamInfo?.[1]?.img || "",
+          t1s: currentMatch.score?.[0]?.r ? `${currentMatch.score[0].r}/${currentMatch.score[0].w} (${currentMatch.score[0].o})` : "0/0",
+          t2s: currentMatch.score?.[1]?.r ? `${currentMatch.score[1].r}/${currentMatch.score[1].w} (${currentMatch.score[1].o})` : "0/0",
+          ms: currentMatch.matchEnded ? "result" : (currentMatch.matchStarted ? "live" : "fixture")
+        };
+      }
+    }
+
+    return null;
   } catch (error) {
     console.error("[Cricket API] Error fetching live score:", error);
     return null;
@@ -247,6 +297,7 @@ export async function getMatchSquad(matchId: string) {
 
 /**
  * Get match scorecard
+ * Enhanced to provide better mapping and fallbacks
  */
 export async function getMatchScorecard(matchId: string) {
   try {
@@ -260,7 +311,31 @@ export async function getMatchScorecard(matchId: string) {
     }
 
     const data = await res.json();
-    return data.data || null;
+    
+    if (data.data) {
+      return data.data;
+    }
+
+    // Fallback: Try to get basic info from getAllMatches if scorecard is not available yet
+    const allMatches = await getAllMatches();
+    const match = allMatches.find(m => m.id === matchId);
+    if (match) {
+      return {
+        id: match.id,
+        name: match.name,
+        matchType: match.matchType,
+        status: match.status,
+        venue: "Venue not specified",
+        dateTimeGMT: match.dateTimeGMT,
+        score: [
+          { inning: match.t1, r: 0, w: 0, o: 0 },
+          { inning: match.t2, r: 0, w: 0, o: 0 }
+        ],
+        scorecard: []
+      };
+    }
+
+    return null;
   } catch (error) {
     console.error("[Cricket API] Error fetching scorecard:", error);
     return null;
