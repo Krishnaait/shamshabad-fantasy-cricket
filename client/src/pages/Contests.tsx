@@ -1,21 +1,18 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Users, Calendar, Clock, TrendingUp, Award, Star, Zap } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
-import { toast } from "sonner";
 import { MatchCardSkeletonGrid } from "@/components/MatchCardSkeleton";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Contests() {
   const [, setLocation] = useLocation();
-  
-  // Use custom auth hook that checks localStorage immediately
   const { isAuthenticated, user, handleLogout } = useAuth();
   
   const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatches.useQuery();
@@ -47,53 +44,25 @@ export default function Contests() {
 
   const ContestCard = ({ match, type }: { match: any; type: "live" | "upcoming" }) => {
     // Fetch real contests from API for this match
-    const { data: matchContests = [] } = trpc.contest.getByMatch.useQuery(
+    const { data: matchContests = [], isLoading: contestsLoading } = trpc.contest.getByMatch.useQuery(
       { matchId: match.id },
       { enabled: !!match.id }
     );
     
-    // Use real contest data from API
-    const contests = matchContests.length > 0 ? matchContests : [];
-    
-    // Placeholder for when no contests exist
-    const placeholderContests = [
-      {
-        id: `${match.id}-mega`,
-        name: "Mega Contest",
-        entryFee: 0,
-        prizePool: "Practice",
-        spots: 10000,
-        spotsLeft: Math.floor(Math.random() * 5000) + 3000,
-        winners: 5000,
-        icon: Trophy,
-        color: "text-chart-3"
-      },
-      {
-        id: `${match.id}-practice`,
-        name: "Practice Contest",
-        entryFee: 0,
-        prizePool: "Practice",
-        spots: 5000,
-        spotsLeft: Math.floor(Math.random() * 3000) + 1000,
-        winners: 2500,
-        icon: Star,
-        color: "text-primary"
-      },
-      {
-        id: `${match.id}-beginner`,
-        name: "Beginner Friendly",
-        entryFee: 0,
-        prizePool: "Practice",
-        spots: 2000,
-        spotsLeft: Math.floor(Math.random() * 1000) + 500,
-        winners: 1000,
-        icon: Zap,
-        color: "text-accent"
-      }
-    ];
-    
-    // Use placeholder if no real contests found
-    const displayContests = contests.length > 0 ? contests : placeholderContests;
+    if (contestsLoading) {
+      return (
+        <Card className="border-border/50 animate-pulse">
+          <CardHeader className="h-32 bg-muted/20"></CardHeader>
+          <CardContent className="h-24"></CardContent>
+        </Card>
+      );
+    }
+
+    // If no real contests exist for this match, we don't show the match card in the contests page
+    // to avoid showing mock data.
+    if (matchContests.length === 0) {
+      return null;
+    }
 
     return (
       <Card className="hover-lift transition-smooth border-border/50 hover:border-primary/30 animate-fade-in">
@@ -131,13 +100,11 @@ export default function Contests() {
         </CardHeader>
 
         <CardContent className="space-y-2">
-          {displayContests.map((contest: any) => {
-            const Icon = contest.icon || Trophy;
-            const spots = contest.spots || 1000;
-            const spotsLeft = contest.spotsLeft || Math.floor(Math.random() * 500) + 100;
-            const fillPercentage = ((spots - spotsLeft) / spots) * 100;
-            const color = contest.color || "text-primary";
-            const winners = contest.winners || 500;
+          {matchContests.map((contest: any) => {
+            const spots = contest.maxTeams || 1000;
+            const spotsJoined = contest.totalTeams || 0;
+            const spotsLeft = spots - spotsJoined;
+            const fillPercentage = (spotsJoined / spots) * 100;
             
             return (
               <div
@@ -146,11 +113,11 @@ export default function Contests() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Icon className={`h-4 w-4 ${color}`} />
+                    <Trophy className="h-4 w-4 text-primary" />
                     <span className="font-medium text-sm">{contest.name}</span>
                   </div>
                   <Badge variant="secondary" className="text-xs">
-                    {contest.prizePool || contest.entryFee || "Free"}
+                    {contest.entryFee === 0 ? "Free" : `₹${contest.entryFee}`}
                   </Badge>
                 </div>
 
@@ -160,7 +127,7 @@ export default function Contests() {
                       <Users className="h-3 w-3" />
                       {spotsLeft.toLocaleString()} spots left
                     </span>
-                    <span>{winners.toLocaleString()} winners</span>
+                    <span>Prize Pool: ₹{contest.prizePool}</span>
                   </div>
 
                   {/* Progress bar */}
@@ -203,13 +170,13 @@ export default function Contests() {
           <div className="max-w-3xl">
             <Badge variant="secondary" className="mb-4">
               <Trophy className="h-3 w-3 mr-1" />
-              Free Contests
+              Real Contests
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Join <span className="text-sporty-gradient">Contests</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              Compete with thousands of players in free practice contests. Build your dream team and climb the leaderboards!
+              Compete with thousands of players in real contests. Build your dream team and climb the leaderboards!
             </p>
           </div>
         </div>
@@ -222,28 +189,20 @@ export default function Contests() {
             <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
               <TabsTrigger value="upcoming" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                Upcoming ({upcomingMatches.length})
+                Upcoming
               </TabsTrigger>
               <TabsTrigger value="live" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
-                Live ({liveMatches.length})
+                Live
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="upcoming" className="space-y-6">
               {matchesLoading ? (
                 <MatchCardSkeletonGrid count={6} />
-              ) : upcomingMatches.length === 0 ? (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">No Upcoming Contests</h3>
-                    <p className="text-muted-foreground">Check back soon for new contests!</p>
-                  </CardContent>
-                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {upcomingMatches.slice(0, 12).map((match: any) => (
+                  {upcomingMatches.slice(0, 24).map((match: any) => (
                     <ContestCard key={match.id} match={match} type="upcoming" />
                   ))}
                 </div>
@@ -253,17 +212,9 @@ export default function Contests() {
             <TabsContent value="live" className="space-y-6">
               {matchesLoading ? (
                 <MatchCardSkeletonGrid count={6} />
-              ) : liveMatches.length === 0 ? (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <Trophy className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">No Live Contests</h3>
-                    <p className="text-muted-foreground">Check upcoming contests to join!</p>
-                  </CardContent>
-                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {liveMatches.slice(0, 12).map((match: any) => (
+                  {liveMatches.slice(0, 24).map((match: any) => (
                     <ContestCard key={match.id} match={match} type="live" />
                   ))}
                 </div>
