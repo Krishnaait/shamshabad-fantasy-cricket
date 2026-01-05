@@ -1,4 +1,4 @@
-const CRIC_API_KEY = process.env.CRIC_API_KEY || "";
+const CRIC_API_KEY = process.env.CRIC_API_KEY || "1a822521-d7e0-46ff-98d3-3e51020863f3";
 
 // Cache for matches with 5-minute TTL
 let matchesCache: any = null;
@@ -24,10 +24,14 @@ export interface Match {
     shortname: string;
     img: string;
   }>;
+  fantasyEnabled?: boolean;
+  matchStarted?: boolean;
+  matchEnded?: boolean;
 }
 
 /**
  * Get all matches from Cricket API with fast caching
+ * Uses cricScore for comprehensive list and currentMatches for detailed info
  */
 export async function getAllMatches(): Promise<Match[]> {
   try {
@@ -39,29 +43,35 @@ export async function getAllMatches(): Promise<Match[]> {
 
     console.log("[Cricket API] Fetching fresh matches...");
 
-    // Fetch current matches
+    // 1. Fetch from cricScore (more comprehensive list of matches)
+    const cricScoreRes = await fetch(
+      `https://api.cricapi.com/v1/cricScore?apikey=${CRIC_API_KEY}`,
+      { signal: AbortSignal.timeout(10000) }
+    );
+
+    // 2. Fetch from currentMatches (more detailed info like teamInfo and fantasyEnabled)
     const currentRes = await fetch(
       `https://api.cricapi.com/v1/currentMatches?apikey=${CRIC_API_KEY}`,
       { signal: AbortSignal.timeout(10000) }
     );
 
-    if (!currentRes.ok) {
-      throw new Error(`Cricket API error: ${currentRes.status}`);
+    if (!cricScoreRes.ok || !currentRes.ok) {
+      throw new Error(`Cricket API error: ${cricScoreRes.status} / ${currentRes.status}`);
     }
 
+    const cricScoreData = await cricScoreRes.json();
     const currentData = await currentRes.json();
-    const allMatches: Match[] = [];
+    
+    const allMatchesMap = new Map<string, Match>();
 
-    // Process all matches from the API response
+    // Process currentMatches first (higher quality data)
     if (currentData.data && Array.isArray(currentData.data)) {
       for (const match of currentData.data) {
-        // Extract team names from teams array
         const t1 = match.teams?.[0] || "";
         const t2 = match.teams?.[1] || "";
         const t1img = match.teamInfo?.[0]?.img || "";
         const t2img = match.teamInfo?.[1]?.img || "";
 
-        // Determine match status
         let ms: "live" | "fixture" | "result" = "fixture";
         if (match.matchEnded) {
           ms = "result";
@@ -69,7 +79,7 @@ export async function getAllMatches(): Promise<Match[]> {
           ms = "live";
         }
 
-        allMatches.push({
+        allMatchesMap.set(match.id, {
           id: match.id || "",
           name: match.name || `${t1} vs ${t2}`,
           matchType: match.matchType || "T20",
@@ -84,19 +94,53 @@ export async function getAllMatches(): Promise<Match[]> {
           ar: match.status || "",
           teams: [t1, t2],
           teamInfo: match.teamInfo || [],
+          fantasyEnabled: match.fantasyEnabled,
+          matchStarted: match.matchStarted,
+          matchEnded: match.matchEnded
         });
       }
     }
+
+    // Process cricScore matches (to fill in missing matches)
+    if (cricScoreData.data && Array.isArray(cricScoreData.data)) {
+      for (const match of cricScoreData.data) {
+        if (!allMatchesMap.has(match.id)) {
+          allMatchesMap.set(match.id, {
+            id: match.id || "",
+            name: match.name || `${match.t1} vs ${match.t2}`,
+            matchType: match.matchType || "T20",
+            status: match.status || "Not started",
+            dateTimeGMT: match.dateTimeGMT || new Date().toISOString(),
+            ms: match.ms || "fixture",
+            t1: match.t1 || "",
+            t2: match.t2 || "",
+            t1img: match.t1img || "",
+            t2img: match.t2img || "",
+            s: match.t1s || match.t2s || "",
+            ar: match.status || "",
+            teams: [match.t1, match.t2],
+            teamInfo: [
+              { name: match.t1, shortname: match.t1, img: match.t1img },
+              { name: match.t2, shortname: match.t2, img: match.t2img }
+            ],
+            fantasyEnabled: false, // cricScore doesn't provide this, assume false unless in currentMatches
+            matchStarted: match.ms === "live" || match.ms === "result",
+            matchEnded: match.ms === "result"
+          });
+        }
+      }
+    }
+
+    const allMatches = Array.from(allMatchesMap.values());
 
     // Cache the results
     matchesCache = allMatches;
     cacheTimestamp = Date.now();
 
-    console.log(`[Cricket API] Fetched ${allMatches.length} matches`);
+    console.log(`[Cricket API] Fetched ${allMatches.length} matches (Combined)`);
     return allMatches;
   } catch (error) {
     console.error("[Cricket API] Error fetching matches:", error);
-    // Return cached data even if expired, or empty array
     return matchesCache || [];
   }
 }
@@ -153,7 +197,7 @@ export async function getLiveScore(matchId: string) {
 export async function getMatchSquad(matchId: string) {
   try {
     const res = await fetch(
-      `https://api.cricapi.com/v1/match_squad?apikey=${CRIC_API_KEY}&matchId=${matchId}`,
+      `https://api.cricapi.com/v1/match_squad?apikey=${CRIC_API_KEY}&id=${matchId}`,
       { signal: AbortSignal.timeout(10000) }
     );
 
@@ -175,7 +219,7 @@ export async function getMatchSquad(matchId: string) {
 export async function getMatchScorecard(matchId: string) {
   try {
     const res = await fetch(
-      `https://api.cricapi.com/v1/match_scorecard?apikey=${CRIC_API_KEY}&matchId=${matchId}`,
+      `https://api.cricapi.com/v1/match_scorecard?apikey=${CRIC_API_KEY}&id=${matchId}`,
       { signal: AbortSignal.timeout(10000) }
     );
 
@@ -197,7 +241,7 @@ export async function getMatchScorecard(matchId: string) {
 export async function getFantasyPoints(matchId: string) {
   try {
     const res = await fetch(
-      `https://api.cricapi.com/v1/match_points?apikey=${CRIC_API_KEY}&matchId=${matchId}`,
+      `https://api.cricapi.com/v1/match_points?apikey=${CRIC_API_KEY}&id=${matchId}`,
       { signal: AbortSignal.timeout(10000) }
     );
 

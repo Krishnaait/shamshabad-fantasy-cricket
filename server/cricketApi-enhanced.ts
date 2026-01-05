@@ -5,6 +5,7 @@
  */
 
 import * as cricketApi from "./cricketApi";
+import * as cricketApiFixed from "./cricketApi-fixed";
 
 interface EnhancedMatch extends cricketApi.CurrentMatch {
   category?: "international" | "domestic" | "regional" | "local";
@@ -24,7 +25,7 @@ export async function getAllMatchesComprehensive(): Promise<EnhancedMatch[]> {
     console.log("[Cricket API Enhanced] Fetching comprehensive match list...");
     
     // Get current/live matches (major matches)
-    const currentMatches = await cricketApi.getCurrentMatches();
+    const currentMatches = await cricketApiFixed.getAllMatches();
     console.log(`[Cricket API Enhanced] Current matches: ${currentMatches.length}`);
     
     // Get all series (this includes domestic leagues, regional tournaments, etc.)

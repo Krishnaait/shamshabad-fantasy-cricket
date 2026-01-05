@@ -2,12 +2,14 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { publicProcedure, router } from "./_core/trpc";
 import * as cricketApiFixed from "./cricketApi-fixed";
+import * as cricketApiEnhanced from "./cricketApi-enhanced";
 
 export const cricketRouter = router({
   // Get all matches
   getAllMatches: publicProcedure.query(async () => {
     try {
-      const matches = await cricketApiFixed.getAllMatches();
+      // Use enhanced comprehensive fetching for all matches
+      const matches = await cricketApiEnhanced.getAllMatchesComprehensive();
       return matches;
     } catch (error) {
       console.error("[Cricket Router] Error fetching all matches:", error);

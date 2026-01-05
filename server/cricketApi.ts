@@ -4,7 +4,7 @@
  * Base URL: https://api.cricapi.com/v1
  */
 
-const API_KEY = "1a822521-d7e0-46ff-98d3-3e51020863f3";
+const API_KEY = process.env.CRIC_API_KEY || "1a822521-d7e0-46ff-98d3-3e51020863f3";
 const API_BASE_URL = "https://api.cricapi.com/v1";
 
 interface ApiResponse<T> {
