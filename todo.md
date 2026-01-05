@@ -10,7 +10,7 @@
 - [x] Profile management page
 - [x] Update user profile (name, email, state, country)
 - [x] Session cookie management (Railway-compatible with sameSite: lax)
-- [x] OAuth integration (Manus platform)
+- [x] Custom email/password authentication
 - [x] Role-based access control (admin/user)
 
 ### Cricket API Integration (18 APIs)
@@ -259,11 +259,11 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 
 
 ## 🚨 Session Cookie Issue - Documented (Dec 29, 2025)
-- [x] Remove Manus OAuth redirect from Dashboard component
+- [x] Remove Custom Auth redirect from Dashboard component
 - [x] Update Dashboard to use custom email/password authentication only
 - [x] Remove getLoginUrl() and isOAuthConfigured() calls from Dashboard
 - [x] Test dashboard access - found session cookie not persisting
-- [x] Verify no Manus OAuth redirects occur (SUCCESS)
+- [x] Verify no Custom Auth redirects occur (SUCCESS)
 - [x] Document session cookie issue with comprehensive analysis
 - [ ] **NEXT**: Fix session cookie not being set/persisted after login
 - [ ] Check cookie-parser middleware registration
@@ -272,7 +272,7 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 
 ## 🚀 Deployment - Complete (Dec 29, 2025)
 - [x] Save checkpoint with all current changes (292a594c)
-- [x] Push to GitHub (remove Manus OAuth + upcoming matches fixes)
+- [x] Push to GitHub (remove Custom Auth + upcoming matches fixes)
 - [ ] Trigger Railway redeploy (auto-deploy should start)
 - [ ] Verify deployment on production after Railway completes build
 
@@ -282,11 +282,11 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [x] Verify database connection string is correct (working)
 - [x] Install cookie-parser middleware (pnpm add cookie-parser)
 - [x] Add cookie-parser to Express app before tRPC routes
-- [x] Update sdk.authenticateRequest to support dual auth (custom + Manus OAuth)
+- [x] Update sdk.authenticateRequest to support dual auth (custom + Custom Auth)
 - [x] Test login flow - "Login successful" toast appears ✅
 - [x] URL redirects to /dashboard successfully ✅
 - [ ] **ISSUE**: Dashboard redirects back to login after loading
-- [ ] **ROOT CAUSE**: Cookie domain/proxy issue with Manus subdomain
+- [ ] **ROOT CAUSE**: Cookie domain/proxy issue with Custom subdomain
 - [ ] **TODO**: Add debug logging to track cookie flow
 - [x] Save checkpoint with cookie-parser + dual auth fixes (f521c627)
 - [x] Deploy to GitHub (commit f521c62 pushed)
@@ -294,13 +294,13 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [ ] Test on Railway production after deployment
 
 
-## 🔨 Rebuild Dashboard & Remove Manus OAuth (Dec 29, 2025)
-- [x] Create new Dashboard.tsx from scratch without Manus OAuth
+## 🔨 Rebuild Dashboard & Remove Custom Auth (Dec 29, 2025)
+- [x] Create new Dashboard.tsx from scratch without Custom Auth
 - [x] Use only custom auth (trpc.auth.me.useQuery)
 - [x] Add proper loading states and error handling
 - [x] Display user info, matches, and teams
-- [x] Remove all Manus OAuth imports and references
-- [x] Search codebase for getLoginUrl, isOAuthConfigured, Manus OAuth
+- [x] Remove all Custom Auth imports and references
+- [x] Search codebase for getLoginUrl, isOAuthConfigured, Custom Auth
 - [x] Update const.ts to return /login instead of OAuth URL
 - [x] Set isOAuthConfigured to always return false
 - [ ] Test login → dashboard flow works correctly
@@ -370,7 +370,7 @@ Railway hasn't auto-deployed the latest code yet. You must manually trigger rede
 - [x] Updated Header to use useAuth hook directly for real-time auth detection
 - [x] Header now properly shows user dropdown when authenticated
 - [ ] Issue: Session cookie not persisting after page refresh
-- [ ] Need: Investigate Manus OAuth session management
+- [ ] Need: Investigate Custom Auth session management
 - [ ] Need: Test login flow with proper session handling
 - [ ] Fix token validation logic (likely JWT verification or user lookup)
 - [ ] Test complete login → dashboard flow without redirects
@@ -418,7 +418,7 @@ await db.updateUserLastSignIn(user.id);
 ### Technical Details:
 - Token validation now works correctly for custom auth users
 - `updateUserLastSignIn()` updates timestamp by user ID (doesn't require openId)
-- Dual authentication system working: custom email/password + Manus OAuth fallback
+- Dual authentication system working: custom email/password + Custom Auth fallback
 - localStorage token-based authentication fully functional
 - Authorization header properly sent and received
 

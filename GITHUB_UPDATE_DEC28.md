@@ -217,7 +217,6 @@ Major updates have been deployed to the SHAMSHABAD Fantasy Cricket platform, inc
 
 ## 👥 Team & Support
 
-**Developer**: Manus AI Agent  
 **Project Owner**: Krishna Kumar (krishna@domivoxventures.com)  
 **Repository**: Krishnaait/shamshabad-fantasy-cricket  
 

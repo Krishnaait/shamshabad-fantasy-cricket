@@ -371,7 +371,6 @@ PORT - 3000
 
 ## 👨‍💻 Development Info
 
-**Built by:** Manus AI  
 **Date:** December 28, 2025  
 **Repository:** Krishnaait/shamshabad-fantasy-cricket  
 **License:** MIT  

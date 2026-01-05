@@ -30,11 +30,7 @@ NODE_ENV=production
 PORT=3000
 ```
 
-```env
-OAUTH_SERVER_URL=https://api.manus.im
-VITE_OAUTH_PORTAL_URL=https://login.manus.im
-OWNER_NAME=SHAMSHABAD Admin
-```
+
 
 ---
 

@@ -25,12 +25,7 @@ CRICKET_API_URL=https://api.ecricdream.com/api/v1
 NODE_ENV=production
 ```
 
-### 5. OAuth Configuration (Optional - for Manus Auth)
-```
-VITE_APP_ID=your-app-id
-```
-
-### 6. Owner Information (Optional)
+### 5. Owner Information (Optional)
 ```
 OWNER_OPEN_ID=owner-open-id
 OWNER_NAME=SHAMSHABAD Admin
