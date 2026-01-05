@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -114,7 +114,9 @@ export default function TeamBuilder() {
           p.role.toLowerCase().includes("ar")
       ),
     };
-    const handlePlayerSelect = (player: Player) => {
+  }, [allPlayers]);
+
+  const handlePlayerSelect = (player: Player) => {
     const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
     
     if (!isSelected && selectedPlayers.length >= 11) {
@@ -317,60 +319,67 @@ export default function TeamBuilder() {
                             return (
                               <div
                                 key={player.playerId}
-                                className={`p-4 border rounded-lg flex items-center justify-between ${
+                                className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
                                   isSelected
-                                    ? "bg-primary/10 border-primary"
-                                    : "hover:bg-muted"
+                                    ? "bg-primary/5 border-primary"
+                                    : "bg-card border-border hover:border-primary/50"
                                 }`}
                               >
-                                <div className="flex items-center gap-3">
-                                  <Button
-                                    variant={
-                                      isSelected ? "default" : "outline"
-                                    }
-                                    size="sm"
-                                    onClick={() => handlePlayerSelect(player)}
-                                  >
-                                    <User className="w-4 h-4" />
-                                  </Button>
+                                <div className="flex items-center gap-4">
+                                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <User className="h-6 w-6 text-primary" />
+                                  </div>
                                   <div>
-                                    <p className="font-medium">
+                                    <p className="font-semibold">
                                       {player.playerName}
                                     </p>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-xs text-muted-foreground uppercase">
                                       {player.role}
                                     </p>
                                   </div>
                                 </div>
 
-                                {isSelected && (
-                                  <div className="flex gap-2">
-                                    <Button
-                                      variant={
-                                        isCaptain ? "default" : "outline"
-                                      }
-                                      size="sm"
-                                      onClick={() =>
-                                        handleCaptainSelect(player.playerId)
-                                      }
-                                    >
-                                      <Trophy className="w-4 h-4 mr-1" />
-                                      C
-                                    </Button>
-                                    <Button
-                                      variant={
-                                        isViceCaptain ? "default" : "outline"
-                                      }
-                                      size="sm"
-                                      onClick={() =>
-                                        handleViceCaptainSelect(player.playerId)
-                                      }
-                                    >
-                                      <Star className="w-4 h-4 mr-1" />
-                                      VC
-                                    </Button>
-                                  </div>
-                                )}
+                                <div className="flex items-center gap-2">
+                                  {isSelected && (
+                                    <div className="flex items-center gap-2 mr-4">
+                                      <Button
+                                        size="sm"
+                                        variant={
+                                          isCaptain ? "default" : "outline"
+                                        }
+                                        className="h-8 w-8 p-0 rounded-full"
+                                        onClick={() =>
+                                          handleCaptainSelect(player.playerId)
+                                        }
+                                        title="Captain (2x Points)"
+                                      >
+                                        C
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant={
+                                          isViceCaptain ? "default" : "outline"
+                                        }
+                                        className="h-8 w-8 p-0 rounded-full"
+                                        onClick={() =>
+                                          handleViceCaptainSelect(
+                                            player.playerId
+                                          )
+                                        }
+                                        title="Vice-Captain (1.5x Points)"
+                                      >
+                                        VC
+                                      </Button>
+                                    </div>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    variant={isSelected ? "destructive" : "default"}
+                                    onClick={() => handlePlayerSelect(player)}
+                                  >
+                                    {isSelected ? "Remove" : "Select"}
+                                  </Button>
+                                </div>
                               </div>
                             );
                           })
@@ -383,63 +392,41 @@ export default function TeamBuilder() {
             </div>
 
             {/* Team Summary */}
-            <div>
-              <Card className="p-6 sticky top-8">
-                <h2 className="text-xl font-bold mb-4">Your Team</h2>
+            <div className="lg:col-span-1">
+              <Card className="p-6 sticky top-24">
+                <h2 className="text-xl font-bold mb-6">Team Summary</h2>
 
-                <div className="mb-6">
-                  <Label htmlFor="teamName" className="mb-2 block">
-                    Team Name
-                  </Label>
-                  <Input
-                    id="teamName"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="Enter team name"
-                  />
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Players</span>
+                    <span className="font-bold">
+                      {selectedPlayers.length} / 11
+                    </span>
+                  </div>
+                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary transition-all"
+                      style={{
+                        width: `${(selectedPlayers.length / 11) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
 
-                <div className="mb-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">
-                      Players Selected
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Captain</span>
+                    <span className="font-bold text-primary">
+                      {selectedPlayers.find((p) => p.playerId === captainId)
+                        ?.playerName || "Not Selected"}
                     </span>
-                    <Badge
-                      variant={
-                        selectedPlayers.length === 11 ? "default" : "secondary"
-                      }
-                    >
-                      {selectedPlayers.length}/11
-                    </Badge>
                   </div>
-
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
-                    {selectedPlayers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">
-                        No players selected
-                      </p>
-                    ) : (
-                      selectedPlayers.map((player) => (
-                        <div
-                          key={player.playerId}
-                          className="text-sm p-2 bg-muted rounded flex justify-between items-center"
-                        >
-                          <span>{player.playerName}</span>
-                          <div className="flex gap-1">
-                            {captainId === player.playerId && (
-                              <Badge variant="default" className="text-xs">
-                                C
-                              </Badge>
-                            )}
-                            {viceCaptainId === player.playerId && (
-                              <Badge variant="secondary" className="text-xs">
-                                VC
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Vice-Captain</span>
+                    <span className="font-bold text-primary">
+                      {selectedPlayers.find((p) => p.playerId === viceCaptainId)
+                        ?.playerName || "Not Selected"}
+                    </span>
                   </div>
                 </div>
 
