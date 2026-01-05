@@ -27,6 +27,7 @@ import TeamBuilder from "./pages/TeamBuilder";
 import TeamDetails from "./pages/TeamDetails";
 import Profile from "./pages/Profile";
 import Contests from "./pages/Contests";
+import { Matches } from "./pages/Matches";
 
 function Router() {
   const [location] = useLocation();
@@ -56,6 +57,7 @@ function Router() {
       <Route path={"/forgot-password"} component={ForgotPassword} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/contests"} component={Contests} />
+      <Route path={"/browse-matches"} component={Matches} />
       <Route path={"/team-builder/:matchId"} component={TeamBuilder} />
       <Route path={"/team/:teamId"} component={TeamDetails} />
       <Route path={"/profile"} component={Profile} />

@@ -312,6 +312,12 @@ export default function Home() {
               {/* Quick Actions */}
               <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
                 <Button size="lg" className="h-14 px-8 text-lg bg-gradient-to-r from-primary to-[oklch(0.55_0.16_145)] hover:opacity-90 transition-opacity" asChild>
+                  <Link href="/browse-matches">
+                    <Trophy className="mr-2 h-5 w-5" />
+                    Start Building Now
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-white/30 text-white hover:bg-white/10 bg-white/5" asChild>
                   <Link href="/dashboard">
                     <LayoutDashboard className="mr-2 h-5 w-5" />
                     Go to Dashboard
