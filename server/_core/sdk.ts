@@ -1,7 +1,7 @@
 import type { Request } from "express";
 import { jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
-import { db } from "../db";
+import { getUserById, updateUserLastSignIn } from "../db";
 
 const JWT_SECRET = process.env.JWT_SECRET || "shamshabad-fantasy-cricket-secret-key-2025";
 const secret = new TextEncoder().encode(JWT_SECRET);
@@ -33,7 +33,7 @@ export const sdk = {
       }
 
       // Get user from database
-      const user = await db.getUserById(payload.userId);
+      const user = await getUserById(payload.userId);
 
       if (!user) {
         console.log(`[SDK Auth] User not found: ${payload.userId}`);
@@ -42,7 +42,7 @@ export const sdk = {
 
       // Update last signed in timestamp
       try {
-        await db.updateUserLastSignIn(user.id);
+        await updateUserLastSignIn(user.id);
       } catch (error) {
         console.log("[SDK Auth] Could not update lastSignedIn:", error);
         // Continue anyway - this is not critical
