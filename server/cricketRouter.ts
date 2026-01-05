@@ -50,6 +50,20 @@ export const cricketRouter = router({
     }
   }),
 
+  // Get recent completed matches (limited for homepage)
+  getRecentCompletedMatches: publicProcedure.query(async () => {
+    try {
+      const matches = await cricketApiFixed.getRecentCompletedMatches();
+      return matches;
+    } catch (error) {
+      console.error("[Cricket Router] Error fetching recent completed matches:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch recent completed matches",
+      });
+    }
+  }),
+
   // Get match statistics
   getMatchStatistics: publicProcedure.query(async () => {
     try {

@@ -36,10 +36,10 @@ interface Match {
 export function CompletedMatches() {
   const [completedMatches, setCompletedMatches] = useState<Match[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(
-    { status: "result" },
+  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getRecentCompletedMatches.useQuery(
+    undefined,
     {
-      refetchInterval: 15000, // Auto-refresh every 15 seconds
+      refetchInterval: 60000, // Auto-refresh every minute for completed matches
     }
   );
 
@@ -161,7 +161,10 @@ export function CompletedMatches() {
                   </div>
 
                   {/* Action Button */}
-                  <Button className="w-full mt-3 bg-yellow-600 hover:bg-yellow-700 text-white">
+                  <Button 
+                    className="w-full mt-3 bg-yellow-600 hover:bg-yellow-700 text-white"
+                    onClick={() => window.open(`https://www.cricbuzz.com/cricket-match-highlights/${match.id}`, '_blank')}
+                  >
                     View Details
                   </Button>
                 </div>

@@ -147,7 +147,10 @@ export function LiveMatches() {
                 </div>
 
                 {/* Action Button */}
-                <Button className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white">
+                <Button 
+                  className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => window.open(`https://www.cricbuzz.com/live-cricket-scores/${match.id}`, '_blank')}
+                >
                   Watch Live
                 </Button>
               </div>

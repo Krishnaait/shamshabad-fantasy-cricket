@@ -177,6 +177,17 @@ export async function getTodayAndTomorrowMatches(): Promise<Match[]> {
 }
 
 /**
+ * Get recent completed matches (limited to 5)
+ */
+export async function getRecentCompletedMatches(): Promise<Match[]> {
+  const allMatches = await getAllMatches();
+  return allMatches
+    .filter((match) => match.ms === "result")
+    .sort((a, b) => new Date(b.dateTimeGMT).getTime() - new Date(a.dateTimeGMT).getTime())
+    .slice(0, 5);
+}
+
+/**
  * Get match statistics
  */
 export async function getMatchStatistics() {

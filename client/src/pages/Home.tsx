@@ -473,7 +473,17 @@ export default function Home() {
         <div className="container space-y-16">
           <LiveMatches />
           <UpcomingMatches />
-          <CompletedMatches />
+          <div className="space-y-6">
+            <CompletedMatches />
+            <div className="flex justify-center">
+              <Button variant="outline" size="lg" className="border-yellow-600/50 text-yellow-500 hover:bg-yellow-600/10" asChild>
+                <Link href="/matches">
+                  View All Completed Matches
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
