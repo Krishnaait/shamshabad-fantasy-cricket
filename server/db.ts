@@ -99,7 +99,7 @@ export async function updateUserLastSignIn(userId: number): Promise<void> {
   }
 }
 
-// Manus OAuth compatibility (for owner)
+// Custom authentication compatibility (for owner)
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
@@ -114,7 +114,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   try {
     const values: InsertUser = {
       openId: user.openId,
-      email: user.email || `${user.openId}@manus.local`,
+      email: user.email || `${user.openId}@gamesensefantasy.com`,
       password: "",
     };
     const updateSet: Record<string, unknown> = {};

@@ -223,8 +223,6 @@ shamshabad-fantasy-cricket/
 
 ## 🚀 Deployment
 
-### **Recommended: Manus Platform**
-The project is optimized for deployment on Manus with built-in:
 - MySQL database
 - Environment variables
 - SSL certificates
@@ -313,7 +311,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Cricket data powered by [eCricScore API](https://ecricdream.com)
 - UI components by [shadcn/ui](https://ui.shadcn.com)
 - Icons by [Lucide](https://lucide.dev)
-- Built with [Manus Platform](https://manus.im)
 
 ---
 
