@@ -52,6 +52,7 @@ export default function Header({ isAuthenticated: propIsAuthenticated = false, u
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/matches", label: "Matches" },
     { href: "/about", label: "About" },
     { href: "/how-to-play", label: "How To Play" },
     { href: "/fantasy-cricket", label: "Fantasy" },

@@ -54,16 +54,21 @@ export const teamRouter = router({
       }
 
       // Create the team
-      const team = await createUserTeam({
+      const teamResult = await createUserTeam({
         userId: ctx.user.id,
         matchId: input.matchId,
         teamName: input.teamName,
         totalPoints: 0,
+        status: "confirmed",
+        captain: captains[0].playerId,
+        viceCaptain: viceCaptains[0].playerId,
       });
 
+      const teamId = Number(teamResult.insertId);
+
       // Add players to the team
-      const teamPlayers = input.players.map((player) => ({
-        teamId: team.insertId,
+      const teamPlayersData = input.players.map((player) => ({
+        teamId: teamId,
         playerId: player.playerId,
         playerName: player.playerName,
         role: player.role,
@@ -72,9 +77,9 @@ export const teamRouter = router({
         points: 0,
       }));
 
-      await addTeamPlayers(teamPlayers);
+      await addTeamPlayers(teamPlayersData);
 
-      return { success: true, teamId: team.insertId };
+      return { success: true, teamId: teamId };
     }),
 
   // Get all teams for current user

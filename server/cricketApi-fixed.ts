@@ -156,6 +156,27 @@ export async function getMatchesByStatus(
 }
 
 /**
+ * Get matches for today and tomorrow only (limited to 5)
+ */
+export async function getTodayAndTomorrowMatches(): Promise<Match[]> {
+  const allMatches = await getAllMatches();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(today.getDate() + 2);
+
+  return allMatches
+    .filter((match) => {
+      const matchDate = new Date(match.dateTimeGMT);
+      return matchDate >= today && matchDate < dayAfterTomorrow && match.ms === "fixture";
+    })
+    .sort((a, b) => new Date(a.dateTimeGMT).getTime() - new Date(b.dateTimeGMT).getTime())
+    .slice(0, 5);
+}
+
+/**
  * Get match statistics
  */
 export async function getMatchStatistics() {

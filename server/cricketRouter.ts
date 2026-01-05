@@ -36,6 +36,20 @@ export const cricketRouter = router({
       }
     }),
 
+  // Get matches for today and tomorrow (limited for homepage)
+  getTodayAndTomorrowMatches: publicProcedure.query(async () => {
+    try {
+      const matches = await cricketApiFixed.getTodayAndTomorrowMatches();
+      return matches;
+    } catch (error) {
+      console.error("[Cricket Router] Error fetching today/tomorrow matches:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch homepage matches",
+      });
+    }
+  }),
+
   // Get match statistics
   getMatchStatistics: publicProcedure.query(async () => {
     try {

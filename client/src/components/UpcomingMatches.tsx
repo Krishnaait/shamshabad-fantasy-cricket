@@ -32,11 +32,11 @@ export function UpcomingMatches() {
   const [upcomingMatches, setUpcomingMatches] = useState<MatchWithCountdown[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Fetch upcoming matches (fixture status)
-  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getMatchesByStatus.useQuery(
-    { status: "fixture" },
+  // Fetch upcoming matches (today and tomorrow only for homepage)
+  const { data: allMatches = [], isLoading, refetch } = trpc.cricket.getTodayAndTomorrowMatches.useQuery(
+    undefined,
     {
-      refetchInterval: 15000, // Auto-refresh every 15 seconds
+      refetchInterval: 60000, // Auto-refresh every minute
     }
   );
 
@@ -126,23 +126,33 @@ export function UpcomingMatches() {
         <div className="flex items-center gap-3">
           <div className="text-3xl">⏰</div>
           <div>
-            <h2 className="text-3xl font-bold text-white">Upcoming Matches</h2>
-            <p className="text-sm text-gray-400">Matches coming soon</p>
+            <h2 className="text-3xl font-bold text-white">Today & Tomorrow</h2>
+            <p className="text-sm text-gray-400">Upcoming matches for next 48 hours</p>
           </div>
           <Badge variant="secondary" className="bg-blue-900/50">
             {upcomingMatches.length}
           </Badge>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleManualRefresh}
-          disabled={isRefreshing}
-          className="gap-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.location.href = "/matches"}
+            className="gap-2"
+          >
+            View All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            className="gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {upcomingMatches.length === 0 ? (
@@ -200,7 +210,10 @@ export function UpcomingMatches() {
                 </div>
 
                 {/* Action Button */}
-                <Button className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button 
+                  className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => window.location.href = `/team-builder/${match.id}`}
+                >
                   Create Team
                 </Button>
               </div>

@@ -19,8 +19,8 @@ export default function Home() {
   const { isAuthenticated, user, handleLogout } = useAuth();
   
   // Fetch comprehensive matches including all domestic and local tournaments
-  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getAllMatches.useQuery(undefined, {
-    refetchInterval: 15000,
+  const { data: currentMatches, isLoading: matchesLoading } = trpc.cricket.getTodayAndTomorrowMatches.useQuery(undefined, {
+    refetchInterval: 60000,
   });
   
   // Fetch user's teams if logged in

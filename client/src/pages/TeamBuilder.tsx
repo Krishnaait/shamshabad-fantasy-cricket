@@ -93,50 +93,51 @@ export default function TeamBuilder() {
   const playersByRole = useMemo(() => {
     return {
       all: allPlayers,
-      wk: allPlayers.filter((p) => p.role.toLowerCase().includes("keeper")),
+      wk: allPlayers.filter((p) => 
+        p.role.toLowerCase().includes("keeper") || 
+        p.role.toLowerCase().includes("wk")
+      ),
       bat: allPlayers.filter(
         (p) =>
           p.role.toLowerCase().includes("batsman") ||
-          p.role.toLowerCase().includes("batter")
+          p.role.toLowerCase().includes("batter") ||
+          p.role.toLowerCase().includes("bat")
       ),
-      bowl: allPlayers.filter((p) => p.role.toLowerCase().includes("bowler")),
+      bowl: allPlayers.filter((p) => 
+        p.role.toLowerCase().includes("bowler") ||
+        p.role.toLowerCase().includes("bowl")
+      ),
       ar: allPlayers.filter(
         (p) =>
           p.role.toLowerCase().includes("allrounder") ||
-          p.role.toLowerCase().includes("all-rounder")
+          p.role.toLowerCase().includes("all-rounder") ||
+          p.role.toLowerCase().includes("ar")
       ),
     };
-  }, [allPlayers]);
-
-  const handlePlayerSelect = (player: Player) => {
-    if (
-      selectedPlayers.length >= 11 &&
-      !selectedPlayers.find((p) => p.playerId === player.playerId)
-    ) {
+    const handlePlayerSelect = (player: Player) => {
+    const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
+    
+    if (!isSelected && selectedPlayers.length >= 11) {
       toast.error("You can only select 11 players");
       return;
     }
 
-    const isSelected = selectedPlayers.find((p) => p.playerId === player.playerId);
-
-    if (isSelected) {
-      // Deselect player
-      setSelectedPlayers(
-        selectedPlayers.filter((p) => p.playerId !== player.playerId)
-      );
-      if (captainId === player.playerId) setCaptainId(null);
-      if (viceCaptainId === player.playerId) setViceCaptainId(null);
-    } else {
-      // Select player
-      setSelectedPlayers([
-        ...selectedPlayers,
-        {
-          ...player,
-          isCaptain: false,
-          isViceCaptain: false,
-        },
-      ]);
-    }
+    setSelectedPlayers((prev) => {
+      if (isSelected) {
+        // Remove player
+        const newPlayers = prev.filter((p) => p.playerId !== player.playerId);
+        // Reset captain/vice-captain if they were removed
+        if (captainId === player.playerId) setCaptainId(null);
+        if (viceCaptainId === player.playerId) setViceCaptainId(null);
+        return newPlayers;
+      } else {
+        // Add player
+        return [
+          ...prev,
+          { ...player, isCaptain: false, isViceCaptain: false },
+        ];
+      }
+    });
   };
 
   const handleCaptainSelect = (playerId: string) => {
@@ -439,6 +440,18 @@ export default function TeamBuilder() {
                         </div>
                       ))
                     )}
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="teamName">Team Name</Label>
+                    <Input
+                      id="teamName"
+                      placeholder="Enter team name"
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                    />
                   </div>
                 </div>
 
