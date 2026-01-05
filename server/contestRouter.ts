@@ -20,8 +20,35 @@ export const contestRouter = router({
   getByMatch: publicProcedure
     .input(z.object({ matchId: z.string() }))
     .query(async ({ input }) => {
-      const contests = await getContests();
-      return contests.filter((c) => c.matchId === input.matchId);
+      const allContests = await getContests();
+      const matchContests = allContests.filter((c) => c.matchId === input.matchId);
+      
+      // If no contests exist for this match, automatically seed them
+      // This ensures the user always sees contests for upcoming matches
+      if (matchContests.length === 0) {
+        const sampleContests = [
+          { name: "Mega Contest", entryFee: 0, prizePool: 1000, maxTeams: 100 },
+          { name: "Head to Head", entryFee: 0, prizePool: 100, maxTeams: 2 },
+          { name: "Winner Takes All", entryFee: 0, prizePool: 500, maxTeams: 10 },
+        ];
+        
+        for (const contest of sampleContests) {
+          await createContest({
+            matchId: input.matchId,
+            name: contest.name,
+            entryFee: contest.entryFee,
+            prizePool: contest.prizePool,
+            maxTeams: contest.maxTeams,
+            description: `Join the ${contest.name} and win big!`,
+          });
+        }
+        
+        // Fetch again after seeding
+        const updatedContests = await getContests();
+        return updatedContests.filter((c) => c.matchId === input.matchId);
+      }
+      
+      return matchContests;
     }),
 
   // Get contest details
