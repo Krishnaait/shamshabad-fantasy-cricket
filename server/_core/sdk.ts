@@ -2,6 +2,7 @@ import type { Request } from "express";
 import { jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import { getUserById, updateUserLastSignIn } from "../db";
+import { COOKIE_NAME } from "../../shared/const";
 
 const JWT_SECRET = process.env.JWT_SECRET || "shamshabad-fantasy-cricket-secret-key-2025";
 const secret = new TextEncoder().encode(JWT_SECRET);
@@ -16,7 +17,7 @@ export const sdk = {
    */
   async authenticateRequest(req: Request): Promise<User | null> {
     try {
-      const token = req.cookies?.["auth-token"];
+      const token = req.cookies?.[COOKIE_NAME];
 
       if (!token) {
         console.log("[SDK Auth] No auth token found in cookies");
