@@ -53,13 +53,8 @@ export default function Header({ isAuthenticated: propIsAuthenticated = false, u
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/matches", label: "Matches" },
-    { href: "/about", label: "About" },
-    { href: "/how-to-play", label: "How To Play" },
+    { href: "/about", label: "About Us" },
     { href: "/fantasy-cricket", label: "Fantasy" },
-    { href: "/responsible-gaming", label: "Responsible Gaming" },
-    { href: "/fair-play", label: "Fair Play" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/contact", label: "Contact" },
   ];
 
   const isActive = (href: string) => location === href;
@@ -90,7 +85,7 @@ export default function Header({ isAuthenticated: propIsAuthenticated = false, u
           </Link>
 
           {/* Desktop Navigation - Hidden on mobile/tablet */}
-          <nav className="hidden xl:flex items-center gap-0.5">
+          <nav className="hidden md:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
@@ -157,7 +152,7 @@ export default function Header({ isAuthenticated: propIsAuthenticated = false, u
 
           {/* Mobile Menu Button - Using Sheet for better mobile UX */}
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild className="md:hidden xl:hidden">
+            <SheetTrigger asChild className="md:hidden">
               <Button
                 variant="ghost"
                 size="sm"
@@ -245,21 +240,6 @@ export default function Header({ isAuthenticated: propIsAuthenticated = false, u
                 )}
               </div>
             </SheetContent>
-          </Sheet>
-
-          {/* Tablet Navigation Button (for screens between md and xl) */}
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild className="hidden md:flex xl:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-1"
-                aria-label="Toggle menu"
-              >
-                <Menu className="h-4 w-4" />
-                <span className="text-sm">Menu</span>
-              </Button>
-            </SheetTrigger>
           </Sheet>
         </div>
       </div>
