@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, RefreshCw } from "lucide-react";
+import { Link } from "wouter";
 
 interface Match {
   id: string;
@@ -161,12 +162,11 @@ export function CompletedMatches() {
                   </div>
 
                   {/* Action Button */}
-                  <Button 
-                    className="w-full mt-3 bg-yellow-600 hover:bg-yellow-700 text-white"
-                    onClick={() => window.open(`https://www.cricbuzz.com/cricket-match-highlights/${match.id}`, '_blank')}
-                  >
-                    View Details
-                  </Button>
+                  <Link href={`/match/${match.id}`}>
+                    <Button className="w-full mt-3 bg-yellow-600 hover:bg-yellow-700 text-white">
+                      View Details
+                    </Button>
+                  </Link>
                 </div>
               </Card>
             );

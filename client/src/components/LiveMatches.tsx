@@ -3,7 +3,8 @@ import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Play } from "lucide-react";
+import { Link } from "wouter";
 
 interface Match {
   id: string;
@@ -147,12 +148,11 @@ export function LiveMatches() {
                 </div>
 
                 {/* Action Button */}
-                <Button 
-                  className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white"
-                  onClick={() => window.open(`https://www.cricbuzz.com/live-cricket-scores/${match.id}`, '_blank')}
-                >
-                  Watch Live
-                </Button>
+                <Link href={`/live-match/${match.id}`}>
+                  <Button className="w-full mt-3 bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-2">
+                    <Play className="w-4 h-4" /> Watch Live
+                  </Button>
+                </Link>
               </div>
             </Card>
           ))}

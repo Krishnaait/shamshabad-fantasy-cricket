@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, RefreshCw, ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 interface Match {
   id: string;
@@ -331,12 +331,11 @@ export default function AllMatches() {
                           {match.status}
                         </div>
                         
-                        <Button 
-                          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold shadow-lg shadow-yellow-900/20"
-                          onClick={() => window.open(`https://www.cricbuzz.com/cricket-match-highlights/${match.id}`, '_blank')}
-                        >
-                          View Details
-                        </Button>
+                        <Link href={`/match/${match.id}`}>
+                          <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold shadow-lg shadow-yellow-900/20">
+                            View Details
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </Card>

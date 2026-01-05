@@ -7,6 +7,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AllMatches from "./pages/AllMatches";
+import MatchDetails from "./pages/MatchDetails";
+import LiveMatch from "./pages/LiveMatch";
 import AboutUs from "./pages/AboutUs";
 import HowToPlay from "./pages/HowToPlay";
 import FantasyCricket from "./pages/FantasyCricket";
@@ -37,6 +39,8 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/matches"} component={AllMatches} />
+      <Route path={"/match/:matchId"} component={MatchDetails} />
+      <Route path={"/live-match/:matchId"} component={LiveMatch} />
       <Route path={"/about"} component={AboutUs} />
       <Route path={"/how-to-play"} component={HowToPlay} />
       <Route path={"/fantasy-cricket"} component={FantasyCricket} />
