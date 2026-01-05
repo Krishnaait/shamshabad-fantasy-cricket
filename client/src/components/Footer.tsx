@@ -132,11 +132,11 @@ export default function Footer() {
             </ul>
             <div className="space-y-2">
               <a
-                href="mailto:support@shamshabad.com"
+                href="mailto:support@gamesensefantasy.com"
                 className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                <span className="break-all">support@shamshabad.com</span>
+                <span className="break-all">support@gamesensefantasy.com</span>
               </a>
             </div>
           </div>

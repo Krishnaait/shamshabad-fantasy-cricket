@@ -288,7 +288,7 @@ export default function ResponsibleGaming() {
                 <div className="space-y-4">
                   <div className="p-4 bg-secondary/50 rounded-lg">
                     <h3 className="font-semibold text-foreground mb-2">SHAMSHABAD Support Team</h3>
-                    <p className="text-sm text-muted-foreground">Email: support@shamshabad.com</p>
+                    <p className="text-sm text-muted-foreground">Email: support@gamesensefantasy.com</p>
                   </div>
                   <div className="p-4 bg-secondary/50 rounded-lg">
                     <h3 className="font-semibold text-foreground mb-2">National Helpline for Mental Health</h3>

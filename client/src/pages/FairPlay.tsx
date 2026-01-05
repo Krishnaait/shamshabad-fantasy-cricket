@@ -207,7 +207,7 @@ export default function FairPlay() {
             <Card className="border-border">
               <CardContent className="p-8">
                 <p className="text-muted-foreground mb-6">
-                  Email us at: <strong className="text-foreground">fairplay@shamshabad.com</strong>
+                  Email us at: <strong className="text-foreground">fairplay@gamesensefantasy.com</strong>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Include as much detail as possible: username, date/time, description of the violation, and any

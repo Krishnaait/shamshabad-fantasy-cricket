@@ -120,7 +120,7 @@ export default function FAQ() {
       questions: [
         {
           q: "The website is not loading properly. What should I do?",
-          a: "Try clearing your browser cache, using a different browser, or checking your internet connection. If the problem persists, contact our support team at support@shamshabad.com."
+          a: "Try clearing your browser cache, using a different browser, or checking your internet connection. If the problem persists, contact our support team at support@gamesensefantasy.com."
         },
         {
           q: "My points are not updating. What's wrong?",

@@ -59,7 +59,7 @@ export default function Terms() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-4">Contact Information</h2>
-                <p>For questions about these Terms & Conditions, contact us at: legal@shamshabad.com</p>
+                <p>For questions about these Terms & Conditions, contact us at: legal@gamesensefantasy.com</p>
               </div>
             </div>
           </div>

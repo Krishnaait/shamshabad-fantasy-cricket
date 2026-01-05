@@ -257,7 +257,7 @@ Railway supports multiple instances:
 
 ### Project Support
 - GitHub Issues: https://github.com/Krishnaait/shamshabad-fantasy-cricket/issues
-- Email: support@shamshabad.com
+- Email: support@gamesensefantasy.com
 
 ---
 

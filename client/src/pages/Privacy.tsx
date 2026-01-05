@@ -55,7 +55,7 @@ export default function Privacy() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-4">Contact Information</h2>
-                <p>For privacy-related questions or requests, contact us at: privacy@shamshabad.com</p>
+                <p>For privacy-related questions or requests, contact us at: privacy@gamesensefantasy.com</p>
               </div>
             </div>
           </div>

@@ -73,7 +73,7 @@ export default function Disclaimer() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-foreground mb-4">Contact for Compliance</h2>
-                <p>For compliance-related queries, contact: compliance@shamshabad.com</p>
+                <p>For compliance-related queries, contact: compliance@gamesensefantasy.com</p>
               </div>
             </div>
           </div>

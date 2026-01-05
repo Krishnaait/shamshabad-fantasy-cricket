@@ -39,8 +39,8 @@ export default function Contact() {
     {
       icon: Mail,
       title: "Email",
-      value: "support@shamshabad.com",
-      link: "mailto:support@shamshabad.com",
+      value: "support@gamesensefantasy.com",
+      link: "mailto:support@gamesensefantasy.com",
     },
     {
       icon: MapPin,

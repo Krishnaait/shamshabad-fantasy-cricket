@@ -297,7 +297,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **SHAMSHABAD Fantasy Cricket**
 
 - **Website:** [Coming Soon]
-- **Email:** support@shamshabad.com
+- **Email:** support@gamesensefantasy.com
 - **GitHub:** [@Krishnaait](https://github.com/Krishnaait)
 
 ### **Company Details**

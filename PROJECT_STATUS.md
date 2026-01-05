@@ -385,7 +385,7 @@ For any queries, issues, or feature requests:
 
 1. **GitHub Issues:** https://github.com/Krishnaait/shamshabad-fantasy-cricket/issues
 2. **Website Contact Form:** https://shamshabad-fantasy-cricket-production.up.railway.app/contact
-3. **Email:** support@shamshabad.com (if configured)
+3. **Email:** support@gamesensefantasy.com (if configured)
 
 ---
 
