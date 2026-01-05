@@ -52,6 +52,12 @@ export default function Register() {
       return false;
     }
 
+    // Check name length (minimum 2 characters)
+    if (formData.name.trim().length < 2) {
+      setError("Full name must be at least 2 characters long");
+      return false;
+    }
+
     // Check age
     const age = calculateAge(formData.dob);
     if (age < 18) {
@@ -182,6 +188,7 @@ export default function Register() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="pl-10"
+                      minLength={2}
                       required
                       disabled={isLoading}
                     />
